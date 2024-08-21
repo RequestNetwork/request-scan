@@ -6,7 +6,6 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import { Footer } from '@/components/footer';
-import { ApolloWrapper } from '@/lib/apollo-wrapper';
 import Providers from './providers';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
