@@ -31,9 +31,7 @@ export default function RootLayout({
           <header>
             <Header />
           </header>
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            {children}
-          </main>
+          <main>{children}</main>
           <footer className="min-h-52">
             <Footer />
           </footer>

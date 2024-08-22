@@ -5,10 +5,15 @@ import { RecentArea } from '@/components/recent-area';
 
 export default function Home() {
   return (
-    <>
-      <SearchArea />
-      <StatsArea />
-      <RecentArea />
-    </>
+    <div className="grid">
+      <div className="col-start-1 row-start-1 bg-primary md:h-96"></div>
+      <div className="col-start-1 row-start-1">
+        <div className="flex flex-1 flex-col md:gap-8 md:p-8">
+          <SearchArea />
+          <StatsArea />
+          <RecentArea />
+        </div>
+      </div>
+    </div>
   );
 }
