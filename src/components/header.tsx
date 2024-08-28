@@ -12,7 +12,7 @@ export default function Header() {
 
   return (
     <div className="border-b">
-      <div className="flex h-16 items-center px-4">
+      <div className="flex h-16 items-center px-32">
         <Logo />
         <div className="ml-auto flex items-center space-x-4 px-4">
           {pathname !== '/' && <Search />}
