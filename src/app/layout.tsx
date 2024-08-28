@@ -29,21 +29,21 @@ export default function RootLayout({
         )}
       >
         <ApolloWrapper>
-          <div className="hidden flex-col md:flex">
+          <div className="flex flex-col">
             <header>
               <Header />
             </header>
             <main>
               <div className="grid">
-                <div className="col-start-1 row-start-1 bg-emerald-900 md:h-96 md:p-10"></div>
+                <div className="col-start-1 row-start-1 bg-emerald-900 h-96 p-10"></div>
                 <div className="col-start-1 row-start-1">
-                  <div className="flex flex-1 flex-col md:gap-8 md:py-10 md:px-32">
+                  <div className="flex flex-1 flex-col gap-8 py-10 px-32">
                     {children}
                   </div>
                 </div>
               </div>
             </main>
-            <footer className="min-h-52">
+            <footer className="flex flex-col min-h-52 justify-center bg-emerald-900 border-t">
               <Footer />
             </footer>
           </div>
