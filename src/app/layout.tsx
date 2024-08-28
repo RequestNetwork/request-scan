@@ -6,6 +6,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import { Footer } from '@/components/footer';
+import { ApolloWrapper } from '@/lib/apollo-wrapper';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -27,15 +28,17 @@ export default function RootLayout({
           inter.variable,
         )}
       >
-        <div className="hidden flex-col md:flex">
-          <header>
-            <Header />
-          </header>
-          <main>{children}</main>
-          <footer className="min-h-52">
-            <Footer />
-          </footer>
-        </div>
+        <ApolloWrapper>
+          <div className="hidden flex-col md:flex">
+            <header>
+              <Header />
+            </header>
+            <main>{children}</main>
+            <footer className="min-h-52">
+              <Footer />
+            </footer>
+          </div>
+        </ApolloWrapper>
       </body>
     </html>
   );
