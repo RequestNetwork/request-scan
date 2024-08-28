@@ -23,10 +23,10 @@ import { formatTimestamp } from '@/lib/utils';
 import TimeAgo from 'timeago-react';
 import { CHAIN_SCAN_URLS } from '@/lib/consts';
 import { Payment } from '@/lib/types';
-import { useLatestPaymentsContext } from '@/lib/contexts/latest-payments';
+import { useLatestPayments } from '@/lib/hooks/latest-payments';
 
 export function PaymentTable() {
-  const { payments, isLoading } = useLatestPaymentsContext();
+  const { payments, isLoading } = useLatestPayments();
 
   if (isLoading) {
     return <div>Loading...</div>;

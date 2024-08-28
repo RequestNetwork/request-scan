@@ -1,29 +1,20 @@
 /** @format */
 'use client';
 
-import React, { ReactNode, useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Transaction } from '../types';
 import { useQuery } from '@apollo/client';
 import { TRANSACTIONS_QUERY } from '../queries/transactions';
 import { groupBy } from '../utils';
 
-interface ILatestRequestsContext {
+interface ILatestRequests {
   requests: {
     [channelId: string]: Transaction[];
   };
   isLoading: boolean;
 }
 
-const LatestRequestsContext = React.createContext<ILatestRequestsContext>({
-  requests: {},
-  isLoading: false,
-});
-
-export const LatestRequestsProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+export const useLatestRequests = () => {
   const pollInterval = Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000;
   const first = 10;
   const skip = 0;
@@ -33,7 +24,7 @@ export const LatestRequestsProvider = ({
     pollInterval,
   });
 
-  const contextValue = useMemo(
+  const value = useMemo(
     () => ({
       requests: data?.storage.transactions
         ? groupBy(data?.storage.transactions, 'channelId')
@@ -43,13 +34,6 @@ export const LatestRequestsProvider = ({
     }),
     [data?.storage.transactions, loading],
   );
-  return (
-    <LatestRequestsContext.Provider value={contextValue}>
-      {children}
-    </LatestRequestsContext.Provider>
-  );
-};
 
-export const useLatestRequestsContext = () => {
-  return useContext(LatestRequestsContext);
+  return value as ILatestRequests;
 };
