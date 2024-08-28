@@ -21,16 +21,18 @@ import {
 import Link from 'next/link';
 import { formatTimestamp } from '@/lib/utils';
 import TimeAgo from 'timeago-react';
-import { useLatestRequests } from '@/lib/hooks/latest-requests';
+import { CHAIN_SCAN_URLS } from '@/lib/consts';
+import { Payment } from '@/lib/types';
+import { useLatestPayments } from '@/lib/hooks/latest-payments';
 
-export function RequestTable() {
-  const { requests, isLoading } = useLatestRequests();
+export function RecentPaymentTable() {
+  const { payments, isLoading } = useLatestPayments();
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!requests) {
+  if (!payments) {
     return <div>No data</div>;
   }
 
@@ -38,11 +40,11 @@ export function RequestTable() {
     <Card className="xl:col-span-1">
       <CardHeader className="flex flex-row items-center">
         <div className="grid gap-2">
-          <CardTitle>Requests</CardTitle>
-          <CardDescription>Recent requests.</CardDescription>
+          <CardTitle>Payments</CardTitle>
+          <CardDescription>Recent payments.</CardDescription>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
-          <Link href="#">
+          <Link href="/payments">
             View All
             <ArrowUpRight className="h-4 w-4" />
           </Link>
@@ -52,26 +54,33 @@ export function RequestTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Request Id</TableHead>
+              <TableHead>Payment Reference</TableHead>
+              <TableHead>Transaction Hash</TableHead>
+              <TableHead>Blockchain</TableHead>
               <TableHead className="text-right">Timestamp</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Object.keys(requests).map((channelId: string) => (
-              <TableRow key={channelId}>
+            {payments.slice(0, 10).map((payment: Payment) => (
+              <TableRow key={payment.id}>
+                <TableCell>{payment.reference.slice(0, 8)}...</TableCell>
                 <TableCell>
                   <div className="font-medium text-emerald-700">
-                    <Link href={`/request/${channelId}`}>
-                      {channelId.slice(0, 20)}...
+                    <Link
+                      href={`${CHAIN_SCAN_URLS[payment.chain]}/tx/${payment.txHash}`}
+                      target="_blank"
+                    >
+                      {payment.txHash.slice(0, 14)}...
                     </Link>
                   </div>
                 </TableCell>
+                <TableCell>{payment.chain}</TableCell>
                 <TableCell className="md:table-cell text-right">
                   <TimeAgo
-                    datetime={requests[channelId][0].blockTimestamp * 1000}
+                    datetime={payment.timestamp * 1000}
                     locale="en_short"
                   />{' '}
-                  ({formatTimestamp(requests[channelId][0].blockTimestamp)})
+                  ({formatTimestamp(payment.timestamp)})
                 </TableCell>
               </TableRow>
             ))}
