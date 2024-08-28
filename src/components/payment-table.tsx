@@ -76,8 +76,11 @@ export function PaymentTable() {
                 </TableCell>
                 <TableCell>{payment.chain}</TableCell>
                 <TableCell className="md:table-cell text-right">
-                  <TimeAgo datetime={payment.timestamp * 1000} /> (
-                  {formatTimestamp(payment.timestamp)})
+                  <TimeAgo
+                    datetime={payment.timestamp * 1000}
+                    locale="en_short"
+                  />{' '}
+                  ({formatTimestamp(payment.timestamp)})
                 </TableCell>
               </TableRow>
             ))}
