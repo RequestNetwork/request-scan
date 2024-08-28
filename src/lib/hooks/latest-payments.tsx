@@ -1,27 +1,17 @@
 /** @format */
 'use client';
 
-import React, { ReactNode, useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Payment } from '../types';
 import { CHAINS, PAYMENT_CHAINS } from '../consts';
 import { useQuery } from '@apollo/client';
 import { getPaymentsQuery } from '../queries/payments';
 
-interface ILatestPaymentsContext {
+interface ILatestPayments {
   payments: Payment[];
   isLoading: boolean;
 }
-
-const LatestPaymentsContext = React.createContext<ILatestPaymentsContext>({
-  payments: [],
-  isLoading: false,
-});
-
-export const LatestPaymentsProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+export const useLatestPayments = () => {
   const pollInterval = Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000;
   const first = 10;
   const skip = 0;
@@ -122,7 +112,7 @@ export const LatestPaymentsProvider = ({
     },
   );
 
-  const contextValue = useMemo(
+  const value = useMemo(
     () => ({
       payments:
         mainnetData &&
@@ -223,13 +213,6 @@ export const LatestPaymentsProvider = ({
       zksynceraLoading,
     ],
   );
-  return (
-    <LatestPaymentsContext.Provider value={contextValue}>
-      {children}
-    </LatestPaymentsContext.Provider>
-  );
-};
 
-export const useLatestPaymentsContext = () => {
-  return useContext(LatestPaymentsContext);
+  return value as ILatestPayments;
 };
