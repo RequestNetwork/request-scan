@@ -27,7 +27,7 @@ export const CHAIN_SCAN_URLS = {
   [CHAINS.MOONBEAM]: 'https://moonbeam-explorer.netlify.app',
   [CHAINS.OPTIMISM]: 'https://optimistic.etherscan.io',
   [CHAINS.XDAI]: 'https://blockscout.com/xdai/mainnet',
-  [CHAINS.ZKSYNCERA]: 'https://zkscan.io',
+  [CHAINS.ZKSYNCERA]: 'https://explorer.zksync.io',
 };
 
 export enum PAYMENT_CHAINS {
