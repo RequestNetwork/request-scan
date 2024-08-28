@@ -21,10 +21,10 @@ import {
 import Link from 'next/link';
 import { formatTimestamp } from '@/lib/utils';
 import TimeAgo from 'timeago-react';
-import { useLatestRequestsContext } from '@/lib/contexts/latest-requests';
+import { useLatestRequests } from '@/lib/hooks/latest-requests';
 
 export function RequestTable() {
-  const { requests, isLoading } = useLatestRequestsContext();
+  const { requests, isLoading } = useLatestRequests();
 
   if (isLoading) {
     return <div>Loading...</div>;
