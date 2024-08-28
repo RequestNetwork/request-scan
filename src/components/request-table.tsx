@@ -69,6 +69,7 @@ export function RequestTable() {
                 <TableCell className="md:table-cell text-right">
                   <TimeAgo
                     datetime={requests[channelId][0].blockTimestamp * 1000}
+                    locale="en_short"
                   />{' '}
                   ({formatTimestamp(requests[channelId][0].blockTimestamp)})
                 </TableCell>
