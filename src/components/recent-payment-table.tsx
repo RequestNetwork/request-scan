@@ -23,13 +23,14 @@ import { formatTimestamp } from '@/lib/utils';
 import TimeAgo from 'timeago-react';
 import { CHAIN_SCAN_URLS } from '@/lib/consts';
 import { Payment } from '@/lib/types';
-import { useLatestPayments } from '@/lib/hooks/latest-payments';
+import { useLatestPayments } from '@/lib/hooks/use-latest-payments';
+import { Skeleton } from './ui/skeleton';
 
 export function RecentPaymentTable() {
   const { payments, isLoading } = useLatestPayments();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Skeleton className="h-svh w-full rounded-xl" />;
   }
 
   if (!payments) {
@@ -37,7 +38,7 @@ export function RecentPaymentTable() {
   }
 
   return (
-    <Card className="xl:col-span-1">
+    <Card className="xl:col-span-1 w-[95%] md:w-full">
       <CardHeader className="flex flex-row items-center">
         <div className="grid gap-2">
           <CardTitle>Payments</CardTitle>
@@ -51,7 +52,7 @@ export function RecentPaymentTable() {
         </Button>
       </CardHeader>
       <CardContent>
-        <Table>
+        <Table className="overflow-x-scroll">
           <TableHeader>
             <TableRow>
               <TableHead>Payment Reference</TableHead>

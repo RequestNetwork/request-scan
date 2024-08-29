@@ -6,7 +6,7 @@ import { Socials } from './socials';
 
 export function Footer() {
   return (
-    <div className="flex items-end justify-between md:px-32">
+    <div className="flex items-end justify-between md:px-32 px-2">
       <div className="flex flex-col  md:py-5 md:gap-2 justify-items-center">
         <Logo className="mx-3" color="white" />
         <Socials color="white" />
