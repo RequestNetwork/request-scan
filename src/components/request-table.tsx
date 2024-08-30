@@ -29,6 +29,7 @@ import { useLatestRequests } from '@/lib/hooks/use-latest-requests';
 import Link from 'next/link';
 import { currencyManager } from '@/lib/currency-manager';
 import { formatUnits, isAddress } from 'viem';
+import truncateEthAddress from 'truncate-eth-address';
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -58,14 +59,18 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'payee',
     header: 'Payee',
-    cell: ({ row }: { row: any }) =>
-      row.original?.dataObject?.data?.parameters?.payee?.value || 'N/A',
+    cell: ({ row }: { row: any }) => {
+      const address = row.original?.dataObject?.data?.parameters?.payee?.value;
+      return address ? truncateEthAddress(address) : 'N/A';
+    },
   },
   {
     accessorKey: 'payer',
     header: 'Payer',
-    cell: ({ row }: { row: any }) =>
-      row.original?.dataObject?.data?.parameters?.payer?.value || 'N/A',
+    cell: ({ row }: { row: any }) => {
+      const address = row.original?.dataObject?.data?.parameters?.payer?.value;
+      return address ? truncateEthAddress(address) : 'N/A';
+    },
   },
   {
     accessorKey: 'expectedAmount',
