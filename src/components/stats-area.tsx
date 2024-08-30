@@ -15,11 +15,6 @@ export function StatsArea() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">$700+ Million</div>
-          {/* 
-          <p className="text-xs text-muted-foreground">
-            +20.1% from last month
-          </p>
-          */}
         </CardContent>
       </Card>
       <Card>
@@ -29,11 +24,6 @@ export function StatsArea() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">13,000</div>
-          {/* 
-          <p className="text-xs text-muted-foreground">
-            +180.1% from last month
-          </p>
-          */}
         </CardContent>
       </Card>
       <Card>
@@ -45,9 +35,6 @@ export function StatsArea() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">2,000+ Companies</div>
-          {/* 
-          <p className="text-xs text-muted-foreground">+19% from last month</p>
-          */}
         </CardContent>
       </Card>
       <Card>
@@ -57,9 +44,6 @@ export function StatsArea() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">15,000</div>
-          {/* 
-          <p className="text-xs text-muted-foreground">+201 since last hour</p>
-          */}
         </CardContent>
       </Card>
     </div>

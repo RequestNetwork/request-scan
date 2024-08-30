@@ -18,6 +18,7 @@ export function MainNav({
         href="https://request.network/"
         className={cn('text-sm font-medium transition-colors', hoverClass)}
         target="_blank"
+        rel="noopener noreferrer"
       >
         Request Network
       </Link>
@@ -25,6 +26,7 @@ export function MainNav({
         href="https://docs.request.network/"
         className={cn('text-sm font-medium transition-colors', hoverClass)}
         target="_blank"
+        rel="noopener noreferrer"
       >
         Docs
       </Link>

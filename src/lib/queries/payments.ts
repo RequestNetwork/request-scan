@@ -2,7 +2,7 @@
 
 import { gql, DocumentNode } from '@apollo/client';
 
-export const getPaymentsQuery = (paymentChain: String): DocumentNode =>
+export const getPaymentsQuery = (paymentChain: string): DocumentNode =>
   gql`
   query PaymentsQuery($first: Int, $skip: Int!) {
     ${paymentChain} {

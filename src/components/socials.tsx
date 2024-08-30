@@ -11,6 +11,7 @@ export function Socials({ color = 'black' }: { color?: string }) {
         fgColor={color}
         bgColor="transparent"
         target="_blank"
+        rel="noopener noreferrer"
       />
       <SocialIcon
         href="https://www.linkedin.com/company/request-network"
@@ -18,6 +19,7 @@ export function Socials({ color = 'black' }: { color?: string }) {
         fgColor={color}
         bgColor="transparent"
         target="_blank"
+        rel="noopener noreferrer"
       />
       <SocialIcon
         href="https://discord.gg/FsVAR3ny3f"
@@ -25,6 +27,7 @@ export function Socials({ color = 'black' }: { color?: string }) {
         fgColor={color}
         bgColor="transparent"
         target="_blank"
+        rel="noopener noreferrer"
       />
     </div>
   );

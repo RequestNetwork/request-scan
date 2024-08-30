@@ -11,7 +11,7 @@ export function Logo({
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   return (
-    <Link href="/" className={cn(className)} {...props}>
+    <Link href="/" {...props} className={cn(className)}>
       {color === 'black' ? (
         <Image
           src="logo-2.svg"

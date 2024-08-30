@@ -11,13 +11,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const groupBy = (items: any, key: any) =>
-  items.reduce(
-    (result: any, item: any) => ({
-      ...result,
-      [item[key]]: [...(result[item[key]] || []), item],
-    }),
-    {},
-  );
+  items.reduce((result: any, item: any) => {
+    if (!result[item[key]]) {
+      result[item[key]] = [];
+    }
+    result[item[key]].push(item);
+    return result;
+  }, {});
 
 export const formatTimestamp = (timestamp: number) =>
   `${new Date(timestamp * 1000).toLocaleString('en-US', {

@@ -35,7 +35,7 @@ export default function RootLayout({
             </header>
             <main>
               <div className="grid">
-                <div className="col-start-1 row-start-1 bg-emerald-900 h-96 p-10"></div>
+                <div className="col-start-1 row-start-1 bg-emerald-900 h-96 p-10" />
                 <div className="col-start-1 row-start-1">
                   <div className="flex flex-1 flex-col gap-8 py-10 px-32">
                     {children}
