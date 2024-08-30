@@ -52,41 +52,45 @@ export function RecentPaymentTable() {
         </Button>
       </CardHeader>
       <CardContent>
-        <Table className="overflow-x-scroll">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Payment Reference</TableHead>
-              <TableHead>Transaction Hash</TableHead>
-              <TableHead>Blockchain</TableHead>
-              <TableHead className="text-right">Timestamp</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {payments.slice(0, 10).map((payment: Payment) => (
-              <TableRow key={payment.id}>
-                <TableCell>{payment.reference.slice(0, 8)}...</TableCell>
-                <TableCell>
-                  <div className="font-medium text-emerald-700">
-                    <Link
-                      href={`${CHAIN_SCAN_URLS[payment.chain]}/tx/${payment.txHash}`}
-                      target="_blank"
-                    >
-                      {payment.txHash.slice(0, 14)}...
-                    </Link>
-                  </div>
-                </TableCell>
-                <TableCell>{payment.chain}</TableCell>
-                <TableCell className="md:table-cell text-right">
-                  <TimeAgo
-                    datetime={payment.timestamp * 1000}
-                    locale="en_short"
-                  />{' '}
-                  ({formatTimestamp(payment.timestamp)})
-                </TableCell>
+        {payments.length === 0 ? (
+          <div>No recent payments available.</div>
+        ) : (
+          <Table className="overflow-x-scroll">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Payment Reference</TableHead>
+                <TableHead>Transaction Hash</TableHead>
+                <TableHead>Blockchain</TableHead>
+                <TableHead className="text-right">Timestamp</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {payments.slice(0, 10).map((payment: Payment) => (
+                <TableRow key={payment.id}>
+                  <TableCell>{payment.reference.slice(0, 8)}...</TableCell>
+                  <TableCell>
+                    <div className="font-medium text-emerald-700">
+                      <Link
+                        href={`${CHAIN_SCAN_URLS[payment.chain]}/tx/${payment.txHash}`}
+                        target="_blank"
+                      >
+                        {payment.txHash.slice(0, 14)}...
+                      </Link>
+                    </div>
+                  </TableCell>
+                  <TableCell>{payment.chain}</TableCell>
+                  <TableCell className="md:table-cell text-right">
+                    <TimeAgo
+                      datetime={payment.timestamp * 1000}
+                      locale="en_short"
+                    />{' '}
+                    ({formatTimestamp(payment.timestamp)})
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );
