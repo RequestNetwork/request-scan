@@ -27,6 +27,8 @@ import TimeAgo from 'timeago-react';
 import { formatTimestamp } from '@/lib/utils';
 import { useLatestRequests } from '@/lib/hooks/use-latest-requests';
 import Link from 'next/link';
+import { currencyManager } from '@/lib/currency-manager';
+import { formatUnits, isAddress } from 'viem';
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -68,8 +70,16 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'expectedAmount',
     header: 'Expected Amount',
-    cell: ({ row }: { row: any }) =>
-      `${row.original?.dataObject?.data?.parameters?.expectedAmount || 'N/A'}`,
+    cell: ({ row }: { row: any }) => {
+      const currencyValue =
+        row.original?.dataObject?.data?.parameters?.currency?.value;
+
+      const currencyDetails = isAddress(currencyValue)
+        ? currencyManager.fromAddress(currencyValue)
+        : currencyManager.fromSymbol(currencyValue);
+
+      return `${formatUnits(row.original?.dataObject?.data?.parameters?.expectedAmount || '0', currencyDetails?.decimals!) || 'N/A'} ${currencyDetails?.symbol}`;
+    },
   },
 ];
 
@@ -100,16 +110,16 @@ export function RequestTable() {
   });
 
   return (
-    <div className="w-[95%] bg-white border rounded-lg">
-      <div className="p-10 w-[95%]">
+    <div className="w-[95%] bg-white border rounded-lg self-center md:w-full">
+      <div className="p-10">
         <div>
           <h1 className="text-2xl font-bold">Requests</h1>
         </div>
         <div className="flex items-center py-4">
           <h1 className="text-sm text-muted-foreground">All requests.</h1>
         </div>
-        <div className="rounded-md w-[95%]">
-          <Table className="overflow-x-scroll w-[95%]">
+        <div className="rounded-md md:h-[600px]">
+          <Table className="overflow-x-scroll">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -167,7 +177,7 @@ export function RequestTable() {
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4 w-[95%]">
+        <div className="flex items-center justify-end space-x-2 py-4">
           <div className="flex-1 text-sm text-muted-foreground">
             Page {table.getState().pagination.pageIndex + 1}
           </div>
