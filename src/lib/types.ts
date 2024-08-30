@@ -32,4 +32,5 @@ export interface Transaction {
   hash: string;
   id: string;
   size: string;
+  smartContractAddress: string;
 }

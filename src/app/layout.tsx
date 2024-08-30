@@ -36,12 +36,10 @@ export default function RootLayout({
               <Header />
             </header>
             <main>
-              <div className="grid w-full">
+              <div className="grid grid-cols-1">
                 <div className="col-start-1 row-start-1 bg-emerald-900 h-96 p-10" />
                 <div className="col-start-1 row-start-1">
-                  <div className="flex flex-col py-10 md:px-32 w-full">
-                    {children}
-                  </div>
+                  <div className="flex flex-col py-10 md:px-32">{children}</div>
                 </div>
               </div>
             </main>

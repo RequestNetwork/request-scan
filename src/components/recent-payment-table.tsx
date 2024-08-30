@@ -30,7 +30,7 @@ export function RecentPaymentTable() {
   const { payments, isLoading } = useLatestPayments();
 
   if (isLoading) {
-    return <Skeleton className="h-svh w-full rounded-xl" />;
+    return <Skeleton className="h-full w-full rounded-xl" />;
   }
 
   if (!payments) {

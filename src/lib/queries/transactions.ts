@@ -12,7 +12,7 @@ export const TRANSACTIONS_QUERY = gql`
         skip: $skip
         orderBy: blockNumber
         orderDirection: desc
-        where: { data_not: null }
+        where: { data_not_contains: "sepolia", data_not: null }
       ) {
         blockNumber
         blockTimestamp
@@ -22,6 +22,7 @@ export const TRANSACTIONS_QUERY = gql`
         hash
         id
         size
+        smartContractAddress
       }
     }
   }

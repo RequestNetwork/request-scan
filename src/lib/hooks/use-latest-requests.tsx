@@ -31,6 +31,7 @@ export const useLatestRequests = ({
     refetchInterval: pollInterval,
   });
 
+  console.log(data);
   const value = useMemo(
     () => ({
       requests: data?.storage.transactions
