@@ -27,7 +27,7 @@ import { useLatestPayments } from '@/lib/hooks/use-latest-payments';
 import { Skeleton } from './ui/skeleton';
 
 export function RecentPaymentTable() {
-  const { payments, isLoading } = useLatestPayments();
+  const { payments, isLoading } = useLatestPayments({ pollInterval: 30000 });
 
   if (isLoading) {
     return <Skeleton className="h-full w-full rounded-xl" />;

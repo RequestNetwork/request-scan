@@ -11,6 +11,7 @@ export const CHAINS = {
   MATIC: 'matic',
   MOONBEAM: 'moonbeam',
   OPTIMISM: 'optimism',
+  SEPOLIA: 'sepolia',
   XDAI: 'xdai',
   ZKSYNCERA: 'zksyncera',
 };
@@ -26,6 +27,7 @@ export const CHAIN_SCAN_URLS = {
   [CHAINS.MATIC]: 'https://explorer-mainnet.maticvigil.com',
   [CHAINS.MOONBEAM]: 'https://moonbeam-explorer.netlify.app',
   [CHAINS.OPTIMISM]: 'https://optimistic.etherscan.io',
+  [CHAINS.SEPOLIA]: 'https://sepolia.etherscan.io',
   [CHAINS.XDAI]: 'https://blockscout.com/xdai/mainnet',
   [CHAINS.ZKSYNCERA]: 'https://explorer.zksync.io',
 };
@@ -41,6 +43,7 @@ export enum PAYMENT_CHAINS {
   MATIC = 'payment_matic',
   MOONBEAM = 'payment_moonbeam',
   OPTIMISM = 'payment_optimism',
+  SEPOLIA = 'payment_sepolia',
   XDAI = 'payment_xdai',
   ZKSYNCERA = 'payment_zksyncera',
 }
