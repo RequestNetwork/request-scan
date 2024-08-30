@@ -27,6 +27,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "timeago-react": "^3.0.6",
+    "truncate-eth-address": "^1.0.2",
     "viem": "^2.21.0"
   },
   "devDependencies": {
