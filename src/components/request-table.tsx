@@ -83,7 +83,7 @@ export const columns: ColumnDef<Transaction>[] = [
         ? currencyManager.fromAddress(currencyValue)
         : currencyManager.fromSymbol(currencyValue);
 
-      return `${formatUnits(row.original?.dataObject?.data?.parameters?.expectedAmount || '0', currencyDetails?.decimals!) || 'N/A'} ${currencyDetails?.symbol}`;
+      return `${formatUnits(row.original?.dataObject?.data?.parameters?.expectedAmount || '0', currencyDetails?.decimals || 18) || 'N/A'} ${currencyDetails?.symbol}`;
     },
   },
 ];
