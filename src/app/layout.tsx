@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import { Footer } from '@/components/footer';
 import { ApolloWrapper } from '@/lib/apollo-wrapper';
+import Providers from './providers';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -29,18 +30,16 @@ export default function RootLayout({
           inter.variable,
         )}
       >
-        <ApolloWrapper>
+        <Providers>
           <div className="flex flex-col">
             <header>
               <Header />
             </header>
             <main>
-              <div className="grid">
+              <div className="grid grid-cols-1">
                 <div className="col-start-1 row-start-1 bg-emerald-900 h-96 p-10" />
                 <div className="col-start-1 row-start-1">
-                  <div className="flex flex-1 flex-col gap-8 py-10 px-32">
-                    {children}
-                  </div>
+                  <div className="flex flex-col py-10 md:px-32">{children}</div>
                 </div>
               </div>
             </main>
@@ -48,7 +47,7 @@ export default function RootLayout({
               <Footer />
             </footer>
           </div>
-        </ApolloWrapper>
+        </Providers>
       </body>
     </html>
   );

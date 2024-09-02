@@ -27,8 +27,10 @@ export interface Transaction {
   blockTimestamp: number;
   channelId: string;
   data: string;
+  dataObject: any;
   dataHash: string;
   hash: string;
   id: string;
   size: string;
+  smartContractAddress: string;
 }

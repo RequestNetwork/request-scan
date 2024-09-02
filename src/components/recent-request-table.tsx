@@ -21,13 +21,14 @@ import {
 import Link from 'next/link';
 import { formatTimestamp } from '@/lib/utils';
 import TimeAgo from 'timeago-react';
-import { useLatestRequests } from '@/lib/hooks/latest-requests';
+import { useLatestRequests } from '@/lib/hooks/use-latest-requests';
+import { Skeleton } from './ui/skeleton';
 
 export function RecentRequestTable() {
-  const { requests, isLoading } = useLatestRequests();
+  const { requests, isLoading } = useLatestRequests({ pollInterval: 30000 });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Skeleton className="h-svh w-full rounded-xl" />;
   }
 
   if (!requests) {
@@ -35,7 +36,7 @@ export function RecentRequestTable() {
   }
 
   return (
-    <Card className="xl:col-span-1">
+    <Card className="xl:col-span-1 w-[95%] md:w-full ">
       <CardHeader className="flex flex-row items-center">
         <div className="grid gap-2">
           <CardTitle>Requests</CardTitle>
@@ -49,7 +50,7 @@ export function RecentRequestTable() {
         </Button>
       </CardHeader>
       <CardContent>
-        <Table>
+        <Table className="overflow-x-scroll">
           <TableHeader>
             <TableRow>
               <TableHead>Request Id</TableHead>
