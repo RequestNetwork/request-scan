@@ -1,10 +1,14 @@
 /** @format */
 'use client';
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Transaction } from '../types';
 import { groupBy } from '../utils';
-import { useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { fetchRequests } from '../queries/transactions';
 
 interface ILatestRequests {
@@ -12,6 +16,8 @@ interface ILatestRequests {
     [channelId: string]: Transaction[];
   };
   isLoading: boolean;
+  isFetching: boolean;
+  status: string;
 }
 
 type Props = {
@@ -25,13 +31,28 @@ export const useLatestRequests = ({
   skip = 0,
   pollInterval = 0,
 }: Props = {}) => {
-  const { isLoading, data } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { status, isLoading, data, isPlaceholderData, isFetching } = useQuery({
     queryKey: ['requests', first, skip],
     queryFn: () => fetchRequests({ first, skip }),
     refetchInterval: pollInterval,
+    placeholderData: keepPreviousData,
+    staleTime: 1000 * 30,
   });
 
-  console.log(data);
+  // Prefetch the next page!
+  React.useEffect(() => {
+    if (!isPlaceholderData) {
+      const next = (skip + 1) * first;
+      queryClient.prefetchQuery({
+        queryKey: ['requests', first, next],
+        queryFn: () => fetchRequests({ first, skip: next }),
+        staleTime: 1000 * 30,
+      });
+    }
+  }, [data, first, skip, queryClient, isPlaceholderData]);
+
   const value = useMemo(
     () => ({
       requests: data?.storage.transactions
@@ -47,8 +68,16 @@ export const useLatestRequests = ({
         : [],
 
       isLoading,
+      status,
+      isFetching,
     }),
-    [data?.storage.transactions, isLoading],
+    [
+      data?.storage.transactions,
+      isLoading,
+      isFetching,
+      isPlaceholderData,
+      status,
+    ],
   );
 
   return value as ILatestRequests;
