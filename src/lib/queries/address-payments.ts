@@ -5,15 +5,15 @@ import { Payment } from '../types';
 import { graphQLClient } from '../graphQlClient';
 import { formatPaymentData } from '../utils';
 
-export const PAYMENTS_QUERY = gql`
-  query PaymentsQuery($first: Int, $skip: Int!) {
-    #
+export const ADDRESS_PAYMENTS_QUERY = gql`
+  query AddressPaymentsQuery($first: Int, $skip: Int!, $address: Bytes) {
     payment_mainnet {
       payments(
         first: $first
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -41,6 +41,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -68,6 +69,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -95,6 +97,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -122,6 +125,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -149,6 +153,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -176,6 +181,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -203,6 +209,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -230,6 +237,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -257,6 +265,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -284,6 +293,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -311,6 +321,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -338,6 +349,7 @@ export const PAYMENTS_QUERY = gql`
         skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
       ) {
         currency
         amount
@@ -362,12 +374,13 @@ export const PAYMENTS_QUERY = gql`
   }
 `;
 
-export const fetchPayments = async (variables: {
+export const fetchAddressPayments = async (variables: {
   first: number;
   skip: number;
+  address: string;
 }): Promise<Payment[]> => {
   const data: { [x: string]: { payments: Payment[] } } =
-    await graphQLClient.request(PAYMENTS_QUERY, variables);
+    await graphQLClient.request(ADDRESS_PAYMENTS_QUERY, variables);
 
   return formatPaymentData(data);
 };

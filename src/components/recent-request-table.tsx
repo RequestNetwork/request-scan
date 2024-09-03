@@ -25,7 +25,9 @@ import { useLatestRequests } from '@/lib/hooks/use-latest-requests';
 import { Skeleton } from './ui/skeleton';
 
 export function RecentRequestTable() {
-  const { requests, isLoading } = useLatestRequests({ pollInterval: 30000 });
+  const { requests, isLoading } = useLatestRequests({
+    pollInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
+  });
 
   if (isLoading) {
     return <Skeleton className="h-svh w-full rounded-xl" />;

@@ -2,7 +2,6 @@
 
 'use client';
 
-import * as React from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -24,13 +23,11 @@ import {
 } from '@/components/ui/table';
 import { Transaction } from '@/lib/types';
 import TimeAgo from 'timeago-react';
-import { formatTimestamp } from '@/lib/utils';
-import { useLatestRequests } from '@/lib/hooks/use-latest-requests';
+import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
 import Link from 'next/link';
-import { currencyManager } from '@/lib/currency-manager';
-import { formatUnits, isAddress } from 'viem';
 import truncateEthAddress from 'truncate-eth-address';
 import { Loader2 } from 'lucide-react';
+import { Dispatch, SetStateAction } from 'react';
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -76,36 +73,35 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'expectedAmount',
     header: 'Expected Amount',
-    cell: ({ row }: { row: any }) => {
-      const currencyValue =
-        row.original?.dataObject?.data?.parameters?.currency?.value;
-
-      const currencyDetails = isAddress(currencyValue)
-        ? currencyManager.fromAddress(currencyValue)
-        : currencyManager.fromSymbol(currencyValue);
-
-      return `${formatUnits(row.original?.dataObject?.data?.parameters?.expectedAmount || '0', currencyDetails?.decimals || 18) || 'N/A'} ${currencyDetails?.symbol}`;
-    },
+    cell: ({ row }: { row: any }) =>
+      getAmountWithCurrencySymbol(
+        row.original?.dataObject?.data?.parameters?.expectedAmount,
+        row.original?.dataObject?.data?.parameters?.currency?.value,
+        row.original?.dataObject?.data?.parameters?.currency?.network,
+      ),
   },
 ];
 
-export function RequestTable() {
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+interface RequestTableProps {
+  requests: { [channelId: string]: Transaction[] } | undefined;
+  status: string;
+  isFetching: boolean;
+  pagination: PaginationState;
+  setPagination: Dispatch<SetStateAction<PaginationState>>;
+}
 
-  const { requests, status, isFetching } = useLatestRequests({
-    first: pagination.pageSize,
-    skip: pagination.pageIndex * pagination.pageSize,
-    page: pagination.pageIndex + 1,
-  });
-
+export function RequestTable({
+  requests,
+  status,
+  isFetching,
+  pagination,
+  setPagination,
+}: RequestTableProps) {
   const table = useReactTable({
     // Get only the first transaction for each request.
     data: requests ? Object.values(requests).map((request) => request[0]) : [],
     columns,
-    pageCount: 10,
+    pageCount: -1,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -210,7 +206,11 @@ export function RequestTable() {
               variant="outline"
               size="sm"
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage() || isFetching}
+              disabled={
+                !table.getCanNextPage() ||
+                isFetching ||
+                table.getRowModel().rows?.length < 10
+              }
             >
               {isFetching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next

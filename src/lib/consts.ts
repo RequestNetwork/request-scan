@@ -1,5 +1,22 @@
 /** @format */
 
+import { createPublicClient, http } from 'viem';
+import {
+  arbitrum,
+  avalanche,
+  bsc,
+  celo,
+  fantom,
+  fuse,
+  gnosis,
+  mainnet,
+  moonbeam,
+  optimism,
+  polygon,
+  sepolia,
+  zksync,
+} from 'viem/chains';
+
 export const CHAINS = {
   MAINNET: 'mainnet',
   ARBITRUM_ONE: 'arbitrum_one',
@@ -47,3 +64,58 @@ export enum PAYMENT_CHAINS {
   XDAI = 'payment_xdai',
   ZKSYNCERA = 'payment_zksyncera',
 }
+
+export const PUBLIC_CLIENTS = {
+  [CHAINS.MAINNET]: createPublicClient({
+    chain: mainnet,
+    transport: http(),
+  }),
+  [CHAINS.ARBITRUM_ONE]: createPublicClient({
+    chain: arbitrum,
+    transport: http(),
+  }),
+  [CHAINS.AVALANCHE]: createPublicClient({
+    chain: avalanche,
+    transport: http(),
+  }),
+  [CHAINS.BSC]: createPublicClient({
+    chain: bsc,
+    transport: http(),
+  }),
+  [CHAINS.CELO]: createPublicClient({
+    chain: celo,
+    transport: http(),
+  }),
+  [CHAINS.FANTOM]: createPublicClient({
+    chain: fantom,
+    transport: http(),
+  }),
+  [CHAINS.FUSE]: createPublicClient({
+    chain: fuse,
+    transport: http(),
+  }),
+  [CHAINS.MATIC]: createPublicClient({
+    chain: polygon,
+    transport: http(),
+  }),
+  [CHAINS.MOONBEAM]: createPublicClient({
+    chain: moonbeam,
+    transport: http(),
+  }),
+  [CHAINS.OPTIMISM]: createPublicClient({
+    chain: optimism,
+    transport: http(),
+  }),
+  [CHAINS.SEPOLIA]: createPublicClient({
+    chain: sepolia,
+    transport: http(),
+  }),
+  [CHAINS.XDAI]: createPublicClient({
+    chain: gnosis,
+    transport: http(),
+  }),
+  [CHAINS.ZKSYNCERA]: createPublicClient({
+    chain: zksync,
+    transport: http(),
+  }),
+};

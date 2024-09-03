@@ -34,3 +34,9 @@ export interface Transaction {
   size: string;
   smartContractAddress: string;
 }
+
+export interface Channel {
+  id: string;
+  topics: string[];
+  transactions: Transaction[];
+}

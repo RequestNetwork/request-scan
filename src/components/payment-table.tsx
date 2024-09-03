@@ -2,7 +2,6 @@
 
 'use client';
 
-import * as React from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -24,20 +23,20 @@ import {
 } from '@/components/ui/table';
 import { Payment } from '@/lib/types';
 import TimeAgo from 'timeago-react';
-import { formatTimestamp } from '@/lib/utils';
+import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
 import Link from 'next/link';
-import { currencyManager } from '@/lib/currency-manager';
-import { formatUnits, isAddress } from 'viem';
+import { formatUnits } from 'viem';
 import truncateEthAddress from 'truncate-eth-address';
 import { useLatestPayments } from '@/lib/hooks/use-latest-payments';
 import { CHAIN_SCAN_URLS } from '@/lib/consts';
 import { Loader2 } from 'lucide-react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'reference',
     header: 'Payment Reference',
-    cell: ({ row }) => String(row.getValue('reference')).slice(0, 8),
+    cell: ({ row }) => `${String(row.getValue('reference')).slice(0, 16)}...`,
   },
   {
     accessorKey: 'txHash',
@@ -74,26 +73,34 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'from',
     header: 'From',
-    cell: ({ row }) => truncateEthAddress(row.getValue('from')),
+    cell: ({ row }) => (
+      <div className="font-medium text-emerald-700">
+        <Link href={`/address/${row.getValue('from')}`}>
+          {truncateEthAddress(row.getValue('from'))}
+        </Link>
+      </div>
+    ),
   },
   {
     accessorKey: 'to',
     header: 'To',
-    cell: ({ row }) => truncateEthAddress(row.getValue('to')),
+    cell: ({ row }) => (
+      <div className="font-medium text-emerald-700">
+        <Link href={`/address/${row.getValue('to')}`}>
+          {truncateEthAddress(row.getValue('to'))}
+        </Link>
+      </div>
+    ),
   },
   {
     accessorKey: 'amount',
     header: 'Amount',
-    cell: ({ row }) => {
-      const currencyAddress = row.original?.tokenAddress;
-      const currencyDetails = isAddress(currencyAddress)
-        ? currencyManager.fromAddress(currencyAddress)
-        : null;
-
-      return currencyDetails
-        ? `${formatUnits(row.getValue('amount'), currencyDetails?.decimals!)} ${currencyDetails?.symbol}`
-        : formatUnits(row.getValue('amount'), 18);
-    },
+    cell: ({ row }) =>
+      getAmountWithCurrencySymbol(
+        row.getValue('amount'),
+        row.original?.tokenAddress,
+        row.original?.chain,
+      ),
   },
   {
     accessorKey: 'networkFee',
@@ -118,21 +125,24 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function PaymentTable() {
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+interface PaymentTableProps {
+  payments: Payment[] | undefined;
+  status: string;
+  isFetching: boolean;
+  pagination: PaginationState;
+  setPagination: Dispatch<SetStateAction<PaginationState>>;
+}
 
-  const { payments, status, isFetching } = useLatestPayments({
-    first: pagination.pageSize,
-    skip: pagination.pageIndex * pagination.pageSize,
-    page: pagination.pageIndex + 1,
-  });
-
+export function PaymentTable({
+  payments,
+  status,
+  isFetching,
+  pagination,
+  setPagination,
+}: PaymentTableProps) {
   const table = useReactTable({
     // Get only the first transaction for each request.
-    data: payments?.slice(0, 10),
+    data: payments?.slice(0, 10) || [],
     columns,
     pageCount: -1,
     getCoreRowModel: getCoreRowModel(),
@@ -240,7 +250,11 @@ export function PaymentTable() {
               variant="outline"
               size="sm"
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage() || isFetching}
+              disabled={
+                !table.getCanNextPage() ||
+                isFetching ||
+                table.getRowModel().rows?.length < 10
+              }
             >
               Next
             </Button>
