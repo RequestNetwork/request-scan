@@ -127,13 +127,14 @@ export function PaymentTable() {
   const { payments, status, isFetching } = useLatestPayments({
     first: pagination.pageSize,
     skip: pagination.pageIndex * pagination.pageSize,
+    page: pagination.pageIndex + 1,
   });
 
   const table = useReactTable({
     // Get only the first transaction for each request.
     data: payments?.slice(0, 10),
     columns,
-    pageCount: 10,
+    pageCount: -1,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -222,6 +223,7 @@ export function PaymentTable() {
                 variant="outline"
                 size="sm"
                 onClick={() => table.firstPage()}
+                disabled={isFetching}
               >
                 First
               </Button>
@@ -230,7 +232,7 @@ export function PaymentTable() {
               variant="outline"
               size="sm"
               onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              disabled={!table.getCanPreviousPage() || isFetching}
             >
               Previous
             </Button>
@@ -240,7 +242,6 @@ export function PaymentTable() {
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage() || isFetching}
             >
-              {isFetching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
             </Button>
           </div>

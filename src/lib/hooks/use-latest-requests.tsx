@@ -1,15 +1,11 @@
 /** @format */
 'use client';
 
-import React, { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Transaction } from '../types';
-import { groupBy } from '../utils';
-import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchRequests } from '../queries/transactions';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 interface ILatestRequests {
   requests: {
@@ -24,60 +20,59 @@ type Props = {
   first?: number;
   skip?: number;
   pollInterval?: number;
+  page?: number;
 };
+
+export default async function prefetch(first: number, skip: number) {
+  return fetchRequests({ first, skip });
+}
 
 export const useLatestRequests = ({
   first = 10,
   skip = 0,
   pollInterval = 0,
+  page = 0,
 }: Props = {}) => {
-  const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
-  const { status, isLoading, data, isPlaceholderData, isFetching } = useQuery({
+  const [prefetchedData, setPrefetchedData] = useState<{
+    [channelId: string]: Transaction[];
+  }>();
+
+  const { status, isLoading, data, isFetching } = useQuery({
     queryKey: ['requests', first, skip],
     queryFn: () => fetchRequests({ first, skip }),
     refetchInterval: pollInterval,
     placeholderData: keepPreviousData,
     staleTime: 1000 * 30,
+    initialData: prefetchedData,
   });
 
-  // Prefetch the next page!
-  React.useEffect(() => {
-    if (!isPlaceholderData) {
-      const next = (skip + 1) * first;
-      queryClient.prefetchQuery({
-        queryKey: ['requests', first, next],
-        queryFn: () => fetchRequests({ first, skip: next }),
-        staleTime: 1000 * 30,
-      });
+  useEffect(() => {
+    if (page === 0) {
+      return;
     }
-  }, [data, first, skip, queryClient, isPlaceholderData]);
+    const params = new URLSearchParams(searchParams);
+
+    params.set('page', page.toString());
+    replace(`${pathname}?${params.toString()}`);
+
+    (async () => {
+      const requests = await prefetch(first, page * first);
+      setPrefetchedData(requests);
+    })();
+  }, [page]);
 
   const value = useMemo(
     () => ({
-      requests: data?.storage.transactions
-        ? groupBy(
-            data?.storage.transactions.map((transaction: Transaction) => {
-              return {
-                ...transaction,
-                dataObject: JSON.parse(transaction.data),
-              };
-            }),
-            'channelId',
-          )
-        : [],
-
+      requests: data,
       isLoading,
       status,
       isFetching,
     }),
-    [
-      data?.storage.transactions,
-      isLoading,
-      isFetching,
-      isPlaceholderData,
-      status,
-    ],
+    [data, isLoading, isFetching, status],
   );
 
   return value as ILatestRequests;

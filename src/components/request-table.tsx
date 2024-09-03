@@ -98,11 +98,12 @@ export function RequestTable() {
   const { requests, status, isFetching } = useLatestRequests({
     first: pagination.pageSize,
     skip: pagination.pageIndex * pagination.pageSize,
+    page: pagination.pageIndex + 1,
   });
 
   const table = useReactTable({
     // Get only the first transaction for each request.
-    data: Object.values(requests).map((request) => request[0]),
+    data: requests ? Object.values(requests).map((request) => request[0]) : [],
     columns,
     pageCount: 10,
     getCoreRowModel: getCoreRowModel(),
