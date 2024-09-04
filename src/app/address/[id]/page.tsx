@@ -10,10 +10,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { fetchAddressPayments } from '@/lib/queries/address-payments';
-import { fetchAddressRequests } from '@/lib/queries/address-transactions';
-import { commonQueryOptions } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useAddressPayments } from '@/lib/hooks/use-address-payments';
+import { useAddressRequests } from '@/lib/hooks/use-address-requests';
 import { PaginationState } from '@tanstack/react-table';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
@@ -39,41 +37,13 @@ export default function AddressPage({ params: { id } }: AddressPageProps) {
     status: requestStatus,
     data: requests,
     isFetching: requestIsFetching,
-  } = useQuery({
-    queryKey: [
-      'address-request',
-      id,
-      requestPagination.pageSize,
-      requestPagination.pageIndex * requestPagination.pageSize,
-    ],
-    queryFn: () =>
-      fetchAddressRequests({
-        address: id,
-        first: requestPagination.pageSize,
-        skip: requestPagination.pageIndex * requestPagination.pageSize,
-      }),
-    ...commonQueryOptions,
-  });
+  } = useAddressRequests(id, requestPagination);
 
   const {
     status: paymentStatus,
     data: payments,
     isFetching: paymentIsFetching,
-  } = useQuery({
-    queryKey: [
-      'address-payments',
-      id,
-      requestPagination.pageSize,
-      requestPagination.pageIndex * requestPagination.pageSize,
-    ],
-    queryFn: () =>
-      fetchAddressPayments({
-        address: id,
-        first: requestPagination.pageSize,
-        skip: requestPagination.pageIndex * requestPagination.pageSize,
-      }),
-    ...commonQueryOptions,
-  });
+  } = useAddressPayments(id, paymentsPagination);
 
   return (
     <div className="flex-col items-start justify-start space-y-10 pt-24">

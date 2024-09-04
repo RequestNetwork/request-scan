@@ -160,8 +160,13 @@ export const fetchAddressPayments = async (variables: {
   skip: number;
   address: string;
 }): Promise<Payment[]> => {
-  const data: { [x: string]: { payments: Payment[] } } =
-    await graphQLClient.request(ADDRESS_PAYMENTS_QUERY, variables);
+  try {
+    const data: { [x: string]: { payments: Payment[] } } =
+      await graphQLClient.request(ADDRESS_PAYMENTS_QUERY, variables);
 
-  return formatPaymentData(data);
+    return formatPaymentData(data);
+  } catch (error: any) {
+    console.error('Error fetching address payments:', error);
+    throw error;
+  }
 };

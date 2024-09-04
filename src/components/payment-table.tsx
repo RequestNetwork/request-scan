@@ -99,7 +99,6 @@ export const columns: ColumnDef<Payment>[] = [
       getAmountWithCurrencySymbol(
         row.getValue('amount'),
         row.original?.tokenAddress,
-        row.original?.chain,
       ),
   },
   {
@@ -155,6 +154,14 @@ export function PaymentTable({
     },
   });
 
+  if (status === 'pending') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'error') {
+    return <div>Error occurred while fetching data.</div>;
+  }
+
   return (
     <div className="w-[95%] bg-white border rounded-lg self-center md:w-full">
       <div className="p-10">
@@ -185,16 +192,7 @@ export function PaymentTable({
               ))}
             </TableHeader>
             <TableBody>
-              {status === 'pending' ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
+              {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}

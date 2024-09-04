@@ -77,7 +77,6 @@ export const columns: ColumnDef<Transaction>[] = [
       getAmountWithCurrencySymbol(
         row.original?.dataObject?.data?.parameters?.expectedAmount,
         row.original?.dataObject?.data?.parameters?.currency?.value,
-        row.original?.dataObject?.data?.parameters?.currency?.network,
       ),
   },
 ];
@@ -112,6 +111,14 @@ export function RequestTable({
     },
   });
 
+  if (status === 'pending') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'error') {
+    return <div>Error occurred while fetching data.</div>;
+  }
+
   return (
     <div className="w-[95%] bg-white border rounded-lg self-center md:w-full">
       <div className="p-10">
@@ -142,16 +149,7 @@ export function RequestTable({
               ))}
             </TableHeader>
             <TableBody>
-              {status === 'pending' ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
+              {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
