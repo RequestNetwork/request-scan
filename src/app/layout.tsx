@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import Header from '@/components/header';
 import { Footer } from '@/components/footer';
 import Providers from './providers';
+import { Suspense } from 'react';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -38,7 +39,11 @@ export default function RootLayout({
               <div className="grid grid-cols-1">
                 <div className="col-start-1 row-start-1 bg-emerald-900 h-96 p-10" />
                 <div className="col-start-1 row-start-1">
-                  <div className="flex flex-col py-10 md:px-32">{children}</div>
+                  <div className="flex flex-col py-10 md:px-32">
+                    <Suspense fallback={<div>Loading...</div>}>
+                      {children}
+                    </Suspense>
+                  </div>
                 </div>
               </div>
             </main>
