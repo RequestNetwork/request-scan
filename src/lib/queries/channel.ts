@@ -34,23 +34,30 @@ export const CHANNEL_QUERY = gql`
 
 export const fetchRequest = async (variables: {
   id: string;
-}): Promise<Channel> => {
+}): Promise<Channel | null> => {
   const data: { storage: { channel: Channel } } = await graphQLClient.request(
     CHANNEL_QUERY,
     variables,
   );
 
-  return data?.storage.channel
-    ? {
-        ...data.storage.channel,
-        transactions: data?.storage.channel.transactions.map(
-          (transaction: Transaction) => {
-            return {
-              ...transaction,
-              dataObject: JSON.parse(transaction.data),
-            };
-          },
-        ),
-      }
-    : { id: '', topics: [], transactions: [] };
+  if (!data?.storage.channel) {
+    return null;
+  }
+
+  return {
+    ...data.storage.channel,
+    transactions: data?.storage.channel.transactions.map(
+      (transaction: Transaction) => {
+        try {
+          return {
+            ...transaction,
+            dataObject: JSON.parse(transaction.data),
+          };
+        } catch (error: any) {
+          console.error(`Error parsing transaction data: ${error.message}`);
+          return transaction;
+        }
+      },
+    ),
+  };
 };

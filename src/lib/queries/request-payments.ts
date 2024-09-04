@@ -4,8 +4,11 @@ import { gql } from 'graphql-request';
 import { Payment } from '../types';
 import { graphQLClient } from '../graphQlClient';
 import { formatPaymentData } from '../utils';
+import { CORE_PAYMENT_FIELDS } from './utils';
 
 export const REQUEST_PAYMENTS_QUERY = gql`
+  ${CORE_PAYMENT_FIELDS}
+
   query RequestPaymentsQuery($reference: Bytes!) {
     #
     payment_mainnet {
@@ -14,24 +17,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { reference: $reference }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_arbitrum_one {
@@ -40,24 +26,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_avalanche {
@@ -66,24 +35,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_bsc {
@@ -92,24 +44,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_celo {
@@ -118,24 +53,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_fantom {
@@ -144,24 +62,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_fuse {
@@ -170,24 +71,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_matic {
@@ -196,24 +80,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_moonbeam {
@@ -222,24 +89,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_optimism {
@@ -248,24 +98,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_sepolia {
@@ -274,24 +107,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_xdai {
@@ -300,24 +116,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_zksyncera {
@@ -326,24 +125,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         orderBy: timestamp
         orderDirection: desc
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
   }
@@ -352,10 +134,15 @@ export const REQUEST_PAYMENTS_QUERY = gql`
 export const fetchRequestPayments = async (variables: {
   reference: string;
 }): Promise<Payment[]> => {
-  const data: { [x: string]: { payments: Payment[] } } | null =
-    variables.reference
-      ? await graphQLClient.request(REQUEST_PAYMENTS_QUERY, variables)
-      : null;
+  try {
+    const data: { [x: string]: { payments: Payment[] } } | null =
+      variables.reference
+        ? await graphQLClient.request(REQUEST_PAYMENTS_QUERY, variables)
+        : null;
 
-  return formatPaymentData(data);
+    return formatPaymentData(data);
+  } catch (error) {
+    console.error('fetchRequestPayments', error);
+    throw error;
+  }
 };

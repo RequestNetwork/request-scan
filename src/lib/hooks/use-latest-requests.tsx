@@ -3,9 +3,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Transaction } from '../types';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchRequests } from '../queries/transactions';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { commonQueryOptions } from '../utils';
 
 interface ILatestRequests {
   requests: {
@@ -45,8 +46,8 @@ export const useLatestRequests = ({
     queryKey: ['requests', first, skip],
     queryFn: () => fetchRequests({ first, skip }),
     refetchInterval: pollInterval,
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 30,
+    placeholderData: commonQueryOptions.placeholderData,
+    staleTime: commonQueryOptions.staleTime,
     initialData: prefetchedData,
   });
 

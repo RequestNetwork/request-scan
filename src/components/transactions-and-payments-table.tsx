@@ -14,6 +14,7 @@ import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
 import Link from 'next/link';
 import TimeAgo from 'timeago-react';
 import truncateEthAddress from 'truncate-eth-address';
+import { formatUnits } from 'viem';
 
 interface Props {
   transactions: Transaction[];
@@ -78,22 +79,49 @@ export function TransactionsAndPaymentsTable({
               {formatTimestamp(item.timestamp)})
             </TableCell>
             <TableCell className="font-medium">
-              {'from' in item ? truncateEthAddress(item.from) : ''}
+              {'from' in item ? (
+                <div className="font-medium text-emerald-700">
+                  <Link href={`/address/${item.from}`}>
+                    {truncateEthAddress(item.from)}{' '}
+                  </Link>
+                </div>
+              ) : (
+                ''
+              )}
             </TableCell>
             <TableCell className="font-medium">
-              {'to' in item ? truncateEthAddress(item.to) : ''}
+              {'to' in item ? (
+                <div className="font-medium text-emerald-700">
+                  <Link href={`/address/${item.to}`}>
+                    {truncateEthAddress(item.to)}{' '}
+                  </Link>
+                </div>
+              ) : (
+                ''
+              )}
             </TableCell>
             <TableCell className="font-medium">
               {'dataObject' in item
                 ? getAmountWithCurrencySymbol(
                     item?.dataObject?.data?.parameters?.expectedAmount || 0,
                     item?.dataObject?.data?.parameters?.currency?.value,
-                    item?.dataObject?.data?.parameters?.currency?.network,
+                  )
+                : getAmountWithCurrencySymbol(
+                    BigInt(item?.amount),
+                    item?.tokenAddress,
+                  )}
+            </TableCell>
+            <TableCell className="font-medium">
+              {'gasUsed' in item
+                ? formatUnits(
+                    BigInt(Number(item?.gasUsed) * Number(item?.gasPrice)),
+                    18,
                   )
                 : ''}
             </TableCell>
-            <TableCell className="font-medium"></TableCell>
-            <TableCell className="font-medium"></TableCell>
+            <TableCell className="font-medium text-right">
+              {'feeAmount' in item ? item.feeAmount : ''}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -4,8 +4,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Payment } from '../types';
 import { fetchPayments } from '../queries/payments';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { commonQueryOptions } from '../utils';
 
 interface ILatestPayments {
   payments: Payment[];
@@ -40,8 +41,8 @@ export const useLatestPayments = ({
     queryKey: ['payments', first, skip],
     queryFn: () => fetchPayments({ first, skip }),
     refetchInterval: pollInterval,
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 30,
+    placeholderData: commonQueryOptions.placeholderData,
+    staleTime: commonQueryOptions.staleTime,
     initialData: prefetchedData,
   });
 

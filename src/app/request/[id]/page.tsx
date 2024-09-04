@@ -16,12 +16,14 @@ import { fetchRequest } from '@/lib/queries/channel';
 import { fetchRequestPayments } from '@/lib/queries/request-payments';
 import {
   calculatePaymentReference,
+  commonQueryOptions,
   formatTimestamp,
   getAmountWithCurrencySymbol,
 } from '@/lib/utils';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { Copy, Download } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Copy } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import TimeAgo from 'timeago-react';
 
 interface RequestPageProps {
@@ -31,12 +33,11 @@ interface RequestPageProps {
 }
 
 export default function RequestPage({ params: { id } }: RequestPageProps) {
+  const { push } = useRouter();
   const { data: request, isLoading: isLoadingRequest } = useQuery({
     queryKey: ['request', id],
     queryFn: () => fetchRequest({ id }),
-    refetchInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 30,
+    ...commonQueryOptions,
   });
 
   const reference = request
@@ -53,9 +54,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
     useQuery({
       queryKey: ['request-payments', reference],
       queryFn: () => fetchRequestPayments({ reference }),
-      refetchInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
-      placeholderData: keepPreviousData,
-      staleTime: 1000 * 30,
+      ...commonQueryOptions,
     });
 
   if (isLoadingRequest || isLoadingRequestPayments) {
@@ -63,7 +62,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   }
 
   if (!request) {
-    return <div>No data</div>;
+    push('/not-found');
   }
 
   const firstTransaction = request?.transactions[0];
@@ -90,25 +89,17 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <span className="sr-only">Copy Order ID</span>
                 </Button>
               </CardTitle>
-              <CardDescription>
-                Timestamp:{' '}
-                <TimeAgo
-                  datetime={firstTransaction.blockTimestamp * 1000}
-                  locale="en_short"
-                />{' '}
-                ({formatTimestamp(firstTransaction.blockTimestamp)})
-              </CardDescription>
+              {firstTransaction?.blockTimestamp && (
+                <CardDescription>
+                  Timestamp:{' '}
+                  <TimeAgo
+                    datetime={firstTransaction.blockTimestamp * 1000}
+                    locale="en_short"
+                  />{' '}
+                  ({formatTimestamp(firstTransaction.blockTimestamp)})
+                </CardDescription>
+              )}
             </div>
-            {/* TODO: Export PDF 
-            <div className="ml-auto flex items-center gap-1">
-              <Button size="sm" variant="outline" className="h-8 gap-1">
-                <Download className="h-3.5 w-3.5" />
-                <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                  Export PDF
-                </span>
-              </Button>
-            </div>
-            */}
           </CardHeader>
           <CardContent className="p-6 text-sm">
             <div className="grid gap-3">
@@ -153,8 +144,6 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                         .expectedAmount,
                       request?.transactions[0].dataObject.data.parameters
                         .currency.value,
-                      request?.transactions[0].dataObject.data.parameters
-                        .currency.network,
                     )}
                   </span>
                 </li>
@@ -176,7 +165,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 <div className="font-semibold">Actions & Payments</div>
                 <div>
                   <TransactionsAndPaymentsTable
-                    transactions={request.transactions || []}
+                    transactions={request?.transactions || []}
                     payments={requestPayments || []}
                   />
                 </div>

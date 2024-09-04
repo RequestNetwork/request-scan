@@ -12,7 +12,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { fetchAddressPayments } from '@/lib/queries/address-payments';
 import { fetchAddressRequests } from '@/lib/queries/address-transactions';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { commonQueryOptions } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 import { PaginationState } from '@tanstack/react-table';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
@@ -37,7 +38,7 @@ export default function AddressPage({ params: { id } }: AddressPageProps) {
   const {
     status: requestStatus,
     data: requests,
-    isFetching: reqeustIsFetching,
+    isFetching: requestIsFetching,
   } = useQuery({
     queryKey: [
       'address-request',
@@ -51,9 +52,7 @@ export default function AddressPage({ params: { id } }: AddressPageProps) {
         first: requestPagination.pageSize,
         skip: requestPagination.pageIndex * requestPagination.pageSize,
       }),
-    refetchInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 30,
+    ...commonQueryOptions,
   });
 
   const {
@@ -73,9 +72,7 @@ export default function AddressPage({ params: { id } }: AddressPageProps) {
         first: requestPagination.pageSize,
         skip: requestPagination.pageIndex * requestPagination.pageSize,
       }),
-    refetchInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 30,
+    ...commonQueryOptions,
   });
 
   return (
@@ -115,7 +112,7 @@ export default function AddressPage({ params: { id } }: AddressPageProps) {
             <RequestTable
               status={requestStatus}
               requests={requests}
-              isFetching={reqeustIsFetching}
+              isFetching={requestIsFetching}
               pagination={requestPagination}
               setPagination={setRequestPagination}
             />

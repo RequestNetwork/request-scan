@@ -4,8 +4,10 @@ import { gql } from 'graphql-request';
 import { Payment } from '../types';
 import { graphQLClient } from '../graphQlClient';
 import { formatPaymentData } from '../utils';
+import { CORE_PAYMENT_FIELDS } from './utils';
 
 export const ADDRESS_PAYMENTS_QUERY = gql`
+  ${CORE_PAYMENT_FIELDS}
   query AddressPaymentsQuery($first: Int, $skip: Int!, $address: Bytes) {
     payment_mainnet {
       payments(
@@ -15,24 +17,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_arbitrum_one {
@@ -43,24 +28,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_avalanche {
@@ -71,24 +39,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_bsc {
@@ -99,24 +50,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_celo {
@@ -127,24 +61,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_fantom {
@@ -155,24 +72,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_fuse {
@@ -183,24 +83,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_matic {
@@ -211,24 +94,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_moonbeam {
@@ -239,24 +105,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_optimism {
@@ -267,24 +116,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_sepolia {
@@ -295,24 +127,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_xdai {
@@ -323,24 +138,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
     payment_zksyncera {
@@ -351,24 +149,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         orderDirection: desc
         where: { or: [{ to: $address }, { from: $address }] }
       ) {
-        currency
-        amount
-        amountInCrypto
-        block
-        contractAddress
-        feeAddress
-        feeAmount
-        feeAmountInCrypto
-        from
-        gasPrice
-        gasUsed
-        id
-        maxRateTimespan
-        reference
-        timestamp
-        to
-        tokenAddress
-        txHash
+        ...PaymentFields
       }
     }
   }
