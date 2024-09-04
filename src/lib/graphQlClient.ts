@@ -6,8 +6,8 @@ export const graphQLClient = new GraphQLClient(
   process.env.NEXT_PUBLIC_HASURA_GRAPHQL_URL || '',
   {
     headers: {
-      'x-hasura-admin-secret':
-        process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ADMIN_SECRET || '',
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_HASURA_GRAPHQL_JWT_TOKEN || ''}`,
+      'x-hasura-role': 'request-scan',
     },
   },
 );
