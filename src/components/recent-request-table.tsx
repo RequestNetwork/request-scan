@@ -74,7 +74,9 @@ export function RecentRequestTable() {
                     datetime={requests[channelId][0].blockTimestamp * 1000}
                     locale="en_short"
                   />{' '}
-                  ({formatTimestamp(requests[channelId][0].blockTimestamp)})
+                  <span className="hidden lg:flex-auto">
+                    ({formatTimestamp(requests[channelId][0].blockTimestamp)})
+                  </span>
                 </TableCell>
               </TableRow>
             ))}

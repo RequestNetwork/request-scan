@@ -5,7 +5,7 @@ import { RecentRequestTable } from './recent-request-table';
 
 export function RecentArea() {
   return (
-    <div className="grid gap-4 md:gap-8 md:grid-cols-2 grid-cols-1 place-items-center">
+    <div className="grid gap-4 md:gap-8 md:grid-cols-2 grid-cols-1 place-items-center lg:place-items-start">
       <RecentRequestTable />
       <RecentPaymentTable />
     </div>
