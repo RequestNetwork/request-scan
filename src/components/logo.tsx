@@ -14,7 +14,7 @@ export function Logo({
     <Link href="/" {...props} className={cn(className)}>
       {color === 'black' ? (
         <Image
-          src="logo-2.svg"
+          src="/logo-2.svg"
           alt="Logo"
           className="h-8"
           width="100"
@@ -22,7 +22,7 @@ export function Logo({
         />
       ) : (
         <Image
-          src="logo-3.svg"
+          src="/logo-3.svg"
           alt="Logo"
           className="h-8"
           width="100"

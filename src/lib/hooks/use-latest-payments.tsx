@@ -1,14 +1,12 @@
 /** @format */
 'use client';
 
-import React, { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Payment } from '../types';
 import { fetchPayments } from '../queries/payments';
-import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { commonQueryOptions } from '../utils';
 
 interface ILatestPayments {
   payments: Payment[];
@@ -21,34 +19,47 @@ type Props = {
   first?: number;
   skip?: number;
   pollInterval?: number;
+  page?: number;
 };
+
+export default async function prefetch(first: number, skip: number) {
+  return fetchPayments({ first, skip });
+}
 
 export const useLatestPayments = ({
   first = 10,
   skip = 0,
   pollInterval = 0,
+  page = 0,
 }: Props = {}) => {
-  const queryClient = useQueryClient();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const [prefetchedData, setPrefetchedData] = useState<Payment[] | null>();
 
-  const { status, isLoading, data, isPlaceholderData, isFetching } = useQuery({
+  const { status, isLoading, data, isFetching } = useQuery({
     queryKey: ['payments', first, skip],
     queryFn: () => fetchPayments({ first, skip }),
     refetchInterval: pollInterval,
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 30,
+    placeholderData: commonQueryOptions.placeholderData,
+    staleTime: commonQueryOptions.staleTime,
+    initialData: prefetchedData,
   });
 
-  // Prefetch the next page!
-  React.useEffect(() => {
-    if (!isPlaceholderData) {
-      const next = (skip + 1) * first;
-      queryClient.prefetchQuery({
-        queryKey: ['payments', first, next],
-        queryFn: () => fetchPayments({ first, skip: next }),
-        staleTime: 1000 * 30,
-      });
+  useEffect(() => {
+    if (page === 0) {
+      return;
     }
-  }, [data, first, skip, queryClient, isPlaceholderData]);
+    const params = new URLSearchParams(searchParams);
+
+    params.set('page', page.toString());
+    replace(`${pathname}?${params.toString()}`);
+
+    (async () => {
+      const payments = await prefetch(first, page * first);
+      setPrefetchedData(payments);
+    })();
+  }, [page]);
 
   const value = useMemo(
     () => ({
@@ -57,7 +68,7 @@ export const useLatestPayments = ({
       status,
       isFetching,
     }),
-    [data, isLoading, status, isPlaceholderData, isFetching],
+    [data, isLoading, status, isFetching],
   );
 
   return value as ILatestPayments;

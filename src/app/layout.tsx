@@ -1,7 +1,7 @@
 /** @format */
 
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import Header from '@/components/header';
@@ -9,7 +9,7 @@ import { Footer } from '@/components/footer';
 import Providers from './providers';
 import { Suspense } from 'react';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: 'Request Scan (The Request Network Explorer)',
@@ -27,7 +27,7 @@ export default function RootLayout({
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          inter.variable,
+          montserrat.variable,
         )}
       >
         <Providers>

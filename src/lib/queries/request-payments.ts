@@ -6,24 +6,23 @@ import { graphQLClient } from '../graphQlClient';
 import { formatPaymentData } from '../utils';
 import { CORE_PAYMENT_FIELDS } from './utils';
 
-export const PAYMENTS_QUERY = gql`
+export const REQUEST_PAYMENTS_QUERY = gql`
   ${CORE_PAYMENT_FIELDS}
-  query PaymentsQuery($first: Int, $skip: Int!) {
+
+  query RequestPaymentsQuery($reference: Bytes!) {
     #
     payment_mainnet {
       payments(
-        first: $first
-        skip: $skip
         orderBy: timestamp
         orderDirection: desc
+        where: { reference: $reference }
       ) {
         ...PaymentFields
       }
     }
     payment_arbitrum_one {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -32,8 +31,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_avalanche {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -42,8 +40,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_bsc {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -52,8 +49,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_celo {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -62,8 +58,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_fantom {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -72,8 +67,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_fuse {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -82,8 +76,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_matic {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -92,8 +85,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_moonbeam {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -102,8 +94,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_optimism {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -112,8 +103,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_sepolia {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -122,8 +112,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_xdai {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -132,8 +121,7 @@ export const PAYMENTS_QUERY = gql`
     }
     payment_zksyncera {
       payments(
-        first: $first
-        skip: $skip
+        where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
       ) {
@@ -143,12 +131,18 @@ export const PAYMENTS_QUERY = gql`
   }
 `;
 
-export const fetchPayments = async (variables: {
-  first: number;
-  skip: number;
+export const fetchRequestPayments = async (variables: {
+  reference: string;
 }): Promise<Payment[]> => {
-  const data: { [x: string]: { payments: Payment[] } } =
-    await graphQLClient.request(PAYMENTS_QUERY, variables);
+  try {
+    const data: { [x: string]: { payments: Payment[] } } | null =
+      variables.reference
+        ? await graphQLClient.request(REQUEST_PAYMENTS_QUERY, variables)
+        : null;
 
-  return formatPaymentData(data);
+    return formatPaymentData(data);
+  } catch (error) {
+    console.error('fetchRequestPayments', error);
+    throw error;
+  }
 };

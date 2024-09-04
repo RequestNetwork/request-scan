@@ -27,7 +27,9 @@ import { useLatestPayments } from '@/lib/hooks/use-latest-payments';
 import { Skeleton } from './ui/skeleton';
 
 export function RecentPaymentTable() {
-  const { payments, isLoading } = useLatestPayments({ pollInterval: 30000 });
+  const { payments, isLoading } = useLatestPayments({
+    pollInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
+  });
 
   if (isLoading) {
     return <Skeleton className="h-full w-full rounded-xl" />;
@@ -60,7 +62,9 @@ export function RecentPaymentTable() {
               <TableRow>
                 <TableHead>Payment Reference</TableHead>
                 <TableHead>Transaction Hash</TableHead>
-                <TableHead>Blockchain</TableHead>
+                <TableHead className="hidden lg:inline-block">
+                  Blockchain
+                </TableHead>
                 <TableHead className="text-right">Timestamp</TableHead>
               </TableRow>
             </TableHeader>
@@ -78,13 +82,17 @@ export function RecentPaymentTable() {
                       </Link>
                     </div>
                   </TableCell>
-                  <TableCell>{payment.chain}</TableCell>
+                  <TableCell className="hidden lg:inline-block">
+                    {payment.chain}
+                  </TableCell>
                   <TableCell className="md:table-cell text-right">
                     <TimeAgo
                       datetime={payment.timestamp * 1000}
                       locale="en_short"
                     />{' '}
-                    ({formatTimestamp(payment.timestamp)})
+                    <span className="hidden lg:inline-block">
+                      ({formatTimestamp(payment.timestamp)})
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}
