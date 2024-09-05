@@ -41,8 +41,8 @@ When contributing to this repository, please first discuss the change you wish t
 
 We use trunk-based branch strategy: create branches off of `main` to implement changes.
 
-Internal contributors should create a branch from `master` and submit a PR to `master`.
-External contributors should create a fork of the repository and submit a PR to `master`.
+Internal contributors should create a branch from `main` and submit a PR to `main`.
+External contributors should create a fork of the repository, create a branch from `main` and submit a PR to upstream `main`.
 
 Please name your PR with the following convention: `feat: <description>` or `fix: <description>` or `chore: <description>`.
 The description should be a short summary of the changes in the PR.
