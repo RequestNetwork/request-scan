@@ -39,7 +39,7 @@ To ensure fast resolution, please include the useful details:
 
 When contributing to this repository, please first discuss the change you wish to make via a Github Issue before making a change.
 
-We use trunk-based branch strategy: `master` branch represents the most recent released (published on npm) version.
+We use trunk-based branch strategy: create branches off of `main` to implement changes.
 
 Internal contributors should create a branch from `master` and submit a PR to `master`.
 External contributors should create a fork of the repository and submit a PR to `master`.
