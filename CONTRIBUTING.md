@@ -15,7 +15,7 @@ If you found an issue or a bug, please create a Github Issue on the relevant rep
 
 ## Requesting a feature
 
-Request a new feature on our [Github Discussions: Feature Requests](https://github.com/orgs/RequestNetwork/discussions/categories/feature-requests) or by creating Github Issue on teh relevant repository.
+Request a new feature on our [Github Discussions: Feature Requests](https://github.com/orgs/RequestNetwork/discussions/categories/feature-requests) or by creating Github Issue on the relevant repository.
 If you would like to implement a new feature, please submit an issue with a proposal for your work first, to be sure that we can use it.
 
 ## Submission Guidelines
