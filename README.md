@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Request Scan is a powerful blockchain explorer designed to provide insights into the Request Network. Built using Next.js for a performant frontend and a GraphQL API for efficient data access, Request Scan empowers users to explore and analyze transactions, accounts, and other on-chain data related to the Request Network.
+Request Scan is a powerful blockchain explorer designed to provide insights into the Request Network. Built using Next.js for a performant frontend and a GraphQL API for efficient data access, Request Scan empowers users to explore and analyze requests, accounts, and other on-chain data related to the Request Network.
 
 ## Features
 
