@@ -27,10 +27,9 @@ import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
 import Link from 'next/link';
 import { formatUnits } from 'viem';
 import truncateEthAddress from 'truncate-eth-address';
-import { useLatestPayments } from '@/lib/hooks/use-latest-payments';
 import { CHAIN_SCAN_URLS } from '@/lib/consts';
-import { Loader2 } from 'lucide-react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
+import { Skeleton } from './ui/skeleton';
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -155,7 +154,7 @@ export function PaymentTable({
   });
 
   if (status === 'pending') {
-    return <div>Loading...</div>;
+    return <Skeleton className="h-svh w-full rounded-xl" />;
   }
 
   if (status === 'error') {

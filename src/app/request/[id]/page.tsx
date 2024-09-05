@@ -75,7 +75,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
         <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
           <CardHeader className="flex flex-row items-start bg-muted/50">
             <div className="grid gap-0.5">
-              <CardTitle className="group flex items-center gap-2 text-lg">
+              <CardTitle className="group flex items-center gap-2 text-lg break-all">
                 Request {id}
                 <Button
                   size="icon"
@@ -110,7 +110,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 </li>
                 <li className="flex items-center justify-start gap-2">
                   <span className="text-muted-foreground">Payee:</span>
-                  <div className="font-medium text-emerald-700">
+                  <div className="font-medium text-emerald-700 break-all">
                     <Link
                       href={`/address/${firstTransaction?.dataObject?.data?.parameters?.payee?.value}`}
                     >
@@ -123,7 +123,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 </li>
                 <li className="flex items-center justify-start gap-2">
                   <span className="text-muted-foreground">Payer:</span>
-                  <div className="font-medium text-emerald-700">
+                  <div className="font-medium text-emerald-700 break-all">
                     <Link
                       href={`/address/${firstTransaction?.dataObject?.data?.parameters?.payer?.value}`}
                     >
@@ -163,7 +163,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
             <div className="grid grid-cols-1 gap-4 w-full">
               <div className="grid gap-3">
                 <div className="font-semibold">Actions & Payments</div>
-                <div>
+                <div className="overflow-x-scroll">
                   <TransactionsAndPaymentsTable
                     transactions={request?.transactions || []}
                     payments={requestPayments || []}

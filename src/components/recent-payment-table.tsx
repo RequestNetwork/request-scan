@@ -62,7 +62,7 @@ export function RecentPaymentTable() {
               <TableRow>
                 <TableHead>Payment Reference</TableHead>
                 <TableHead>Transaction Hash</TableHead>
-                <TableHead className="hidden lg:inline-block">
+                <TableHead className="hidden 2xl:inline-block">
                   Blockchain
                 </TableHead>
                 <TableHead className="text-right">Timestamp</TableHead>
@@ -82,7 +82,7 @@ export function RecentPaymentTable() {
                       </Link>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden lg:inline-block">
+                  <TableCell className="hidden 2xl:inline-block">
                     {payment.chain}
                   </TableCell>
                   <TableCell className="md:table-cell text-right">
@@ -90,7 +90,7 @@ export function RecentPaymentTable() {
                       datetime={payment.timestamp * 1000}
                       locale="en_short"
                     />{' '}
-                    <span className="hidden lg:inline-block">
+                    <span className="hidden 2xl:inline-block">
                       ({formatTimestamp(payment.timestamp)})
                     </span>
                   </TableCell>

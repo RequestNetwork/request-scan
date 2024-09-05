@@ -50,7 +50,7 @@ export default function AddressPage({ params: { id } }: AddressPageProps) {
       <div>
         <Card>
           <CardHeader>
-            <CardTitle className="group flex items-center gap-2 text-lg">
+            <CardTitle className="group flex items-center gap-2 text-lg break-all">
               Address {id}
               <Button
                 size="icon"

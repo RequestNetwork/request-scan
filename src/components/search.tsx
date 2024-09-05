@@ -33,17 +33,16 @@ export function Search() {
 
   return (
     <div className="relative ml-auto flex-1 md:grow-0 w-full">
-      {/* TODO: add / paymentReference / CID */}
       <Input
         type="search"
         placeholder="Search by Wallet Address / Request ID"
-        className="pl-8 md:w-[400px] lg:w-[800px] h-12 w-full"
+        className="pl-8 md:w-[300px] lg:w-[600px] h-12 w-full"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         onKeyDown={handleKeyPress}
       />
       <Button
-        className="absolute right-2.5 top-1"
+        className="absolute right-2.5 md:right-8 xl:right-2.5 top-1"
         size="icon"
         onClick={handleSearch}
       >
