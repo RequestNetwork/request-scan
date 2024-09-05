@@ -39,7 +39,7 @@ export default function RootLayout({
               <div className="grid grid-cols-1">
                 <div className="col-start-1 row-start-1 bg-emerald-900 h-96 p-10" />
                 <div className="col-start-1 row-start-1">
-                  <div className="flex flex-col py-10 md:px-32">
+                  <div className="flex flex-col py-10 px-5 md:px-16 lg:px-32">
                     <Suspense fallback={<div>Loading...</div>}>
                       {children}
                     </Suspense>

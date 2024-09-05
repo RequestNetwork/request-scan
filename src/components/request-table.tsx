@@ -26,8 +26,8 @@ import TimeAgo from 'timeago-react';
 import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
 import Link from 'next/link';
 import truncateEthAddress from 'truncate-eth-address';
-import { Loader2 } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
+import { Skeleton } from './ui/skeleton';
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -112,7 +112,7 @@ export function RequestTable({
   });
 
   if (status === 'pending') {
-    return <div>Loading...</div>;
+    return <Skeleton className="h-svh w-full rounded-xl" />;
   }
 
   if (status === 'error') {
@@ -120,7 +120,7 @@ export function RequestTable({
   }
 
   return (
-    <div className="w-[95%] bg-white border rounded-lg self-center md:w-full">
+    <div className="bg-white border rounded-lg w-full">
       <div className="p-10">
         <div>
           <h1 className="text-2xl font-bold">Requests</h1>
@@ -128,7 +128,7 @@ export function RequestTable({
         <div className="flex items-center py-4">
           <h1 className="text-sm text-muted-foreground">All requests.</h1>
         </div>
-        <div className="rounded-md md:h-[600px]">
+        <div className="rounded-md">
           <Table className="overflow-x-scroll">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -210,7 +210,6 @@ export function RequestTable({
                 table.getRowModel().rows?.length < 10
               }
             >
-              {isFetching && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Next
             </Button>
           </div>
