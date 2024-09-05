@@ -23,7 +23,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import TimeAgo from 'timeago-react';
 
 interface RequestPageProps {
@@ -33,7 +33,6 @@ interface RequestPageProps {
 }
 
 export default function RequestPage({ params: { id } }: RequestPageProps) {
-  const { push } = useRouter();
   const { data: request, isLoading: isLoadingRequest } = useQuery({
     queryKey: ['request', id],
     queryFn: () => fetchRequest({ id }),
@@ -62,7 +61,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   }
 
   if (!request) {
-    push('/not-found');
+    redirect('/not-found');
   }
 
   const firstTransaction = request?.transactions[0];

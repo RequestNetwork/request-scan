@@ -13,6 +13,7 @@ export function Search() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = () => {
+    if (searchQuery === '' || searchQuery.length < 3) return;
     if (isAddress(searchQuery)) {
       router.push(`/address/${searchQuery}`);
     } else {
@@ -36,7 +37,7 @@ export function Search() {
       <Input
         type="search"
         placeholder="Search by Wallet Address / Request ID"
-        className="pl-8 md:w-[300px] lg:w-[600px] h-12 w-full"
+        className="pl-8 md:w-[300px] lg:w-[600px] xl:w-[700px] 2xl:w-[800px] h-12 w-full"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         onKeyDown={handleKeyPress}
