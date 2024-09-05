@@ -9,11 +9,9 @@ Request Scan is a powerful blockchain explorer designed to provide insights into
 ## Features
 
 - **Intuitive Interface:** A user-friendly design makes it easy to navigate and find the information you need.
-- **Real-Time Data:** Access the latest blockchain data with real-time updates.
-- **Advanced Search:** Search for specific transactions, addresses, or blocks.
-- **Detailed Transaction Views:** Get a comprehensive breakdown of each transaction.
-- **Account Tracking:** Monitor account balances and activity.
-- **Data Visualization:** Charts and graphs help you understand the data at a glance.
+- **Real-Time Data:** Access the latest request network data with real-time updates.
+- **Advanced Search:** Search for specific requests or addresses.
+- **Detailed Request or Address Views:** Get a comprehensive breakdown of each request or address.
 
 ## Technologies Used
 
