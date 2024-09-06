@@ -6,10 +6,10 @@ import * as timeago from 'timeago.js';
 import en_short from 'timeago.js/lib/lang/en_short';
 import { formatUnits, isAddress, keccak256 } from 'viem';
 import { currencyManager } from './currency-manager';
-import { keccak256Hash } from '@requestnetwork/utils';
 import { CHAINS } from './consts';
 import { Payment } from './types';
 import { keepPreviousData } from '@tanstack/react-query';
+import { PaymentReferenceCalculator } from '@requestnetwork/request-client.js';
 
 timeago.register('en_short', en_short);
 
@@ -61,15 +61,12 @@ export function calculatePaymentReference(
   salt: string,
   address: string,
 ): string {
-  if (!requestId || !salt || !address) {
-    throw new Error(
-      'RequestId, salt and address are mandatory to calculate the payment reference',
-    );
-  }
-  // "The value is the last 8 bytes of a salted hash of the requestId: `last8Bytes(hash(requestId + salt + address))`"
-  return keccak256(
-    `0x${keccak256Hash((requestId + salt + address).toLowerCase()).slice(-16)}`,
+  const shortPaymenReference = PaymentReferenceCalculator.calculate(
+    requestId,
+    salt,
+    address,
   );
+  return keccak256(`0x${shortPaymenReference}`);
 }
 
 const mapPaymentToChain = (payment: Payment, chain: string) => ({
