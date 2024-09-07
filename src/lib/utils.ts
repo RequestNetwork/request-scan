@@ -7,9 +7,11 @@ import en_short from 'timeago.js/lib/lang/en_short';
 import { formatUnits, isAddress, keccak256 } from 'viem';
 import { currencyManager } from './currency-manager';
 import { CHAINS } from './consts';
-import { Payment } from './types';
+import { Payment, Transaction } from './types';
 import { keepPreviousData } from '@tanstack/react-query';
 import { PaymentReferenceCalculator } from '@requestnetwork/request-client.js';
+import { RequestLogicTypes } from '@requestnetwork/types';
+import { ActorInfo, Invoice } from '@requestnetwork/data-format';
 
 timeago.register('en_short', en_short);
 
@@ -56,18 +58,19 @@ export const getAmountWithCurrencySymbol = (
  * @param address Payment or refund address
  */
 
-export function calculatePaymentReference(
+export function calculateShortPaymentReference(
   requestId: string,
   salt: string,
   address: string,
-): string {
-  const shortPaymenReference = PaymentReferenceCalculator.calculate(
-    requestId,
-    salt,
-    address,
-  );
-  return keccak256(`0x${shortPaymenReference}`);
+): `0x${string}` {
+  return `0x${PaymentReferenceCalculator.calculate(requestId, salt, address)}`;
 }
+
+export const calculateLongPaymentReference = (
+  shortPaymentReference: `0x${string}`,
+) => {
+  return keccak256(shortPaymentReference);
+};
 
 const mapPaymentToChain = (payment: Payment, chain: string) => ({
   ...payment,
@@ -129,4 +132,40 @@ export const commonQueryOptions = {
   refetchInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
   placeholderData: keepPreviousData,
   staleTime: 1000 * 30,
+};
+
+export const getTransactionCreateParameters = (
+  transaction: Transaction,
+): RequestLogicTypes.ICreateParameters => {
+  return transaction?.dataObject?.data
+    ?.parameters as RequestLogicTypes.ICreateParameters;
+};
+
+export const getContentDataFromCreateTransaction = (
+  createParameters: RequestLogicTypes.ICreateParameters,
+) => {
+  const extensionData = createParameters.extensionsData;
+  const contentData: Invoice =
+    extensionData?.find((extension) => extension.id === 'content-data')
+      ?.parameters?.content;
+
+  return contentData;
+};
+
+export const getBalance = (payments: Payment[] | undefined) => {
+  return payments
+    ? payments
+        .map((payment) => BigInt(payment.amount))
+        .reduce((a, b) => a + b, BigInt(0))
+    : 0;
+};
+
+export const renderAddress = (info: ActorInfo) => {
+  const parts = [
+    info?.address?.['street-address'],
+    info?.address?.locality,
+    info?.address?.['postal-code'],
+    info?.address?.['country-name'],
+  ].filter(Boolean);
+  return parts.length > 0 ? parts.join(', ') : '-';
 };
