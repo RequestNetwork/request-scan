@@ -160,7 +160,7 @@ export const getBalance = (payments: Payment[] | undefined) => {
     : 0;
 };
 
-export const renderAddress = (info: ActorInfo) => {
+export const renderAddress = (info: ActorInfo | undefined) => {
   const parts = [
     info?.address?.['street-address'],
     info?.address?.locality,
