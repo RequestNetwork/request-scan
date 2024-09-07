@@ -11,7 +11,7 @@ import { Payment, Transaction } from './types';
 import { keepPreviousData } from '@tanstack/react-query';
 import { PaymentReferenceCalculator } from '@requestnetwork/request-client.js';
 import { RequestLogicTypes } from '@requestnetwork/types';
-import { Invoice } from '@requestnetwork/data-format';
+import { ActorInfo, Invoice } from '@requestnetwork/data-format';
 
 timeago.register('en_short', en_short);
 
@@ -137,17 +137,18 @@ export const commonQueryOptions = {
 export const getTransactionCreateParameters = (
   transaction: Transaction,
 ): RequestLogicTypes.ICreateParameters => {
-  return transaction?.dataObject.data
-    .parameters as RequestLogicTypes.ICreateParameters;
+  return transaction?.dataObject?.data
+    ?.parameters as RequestLogicTypes.ICreateParameters;
 };
 
 export const getContentDataFromCreateTransaction = (
   createParameters: RequestLogicTypes.ICreateParameters,
 ) => {
   const extensionData = createParameters.extensionsData;
-  const contentData: Invoice = extensionData?.find(
-    (extension) => extension.id === 'content-data',
-  )?.parameters?.content;
+  const contentData: Invoice =
+    extensionData &&
+    extensionData?.find((extension) => extension.id === 'content-data')
+      ?.parameters?.content;
 
   return contentData;
 };
@@ -160,7 +161,7 @@ export const getBalance = (payments: Payment[] | undefined) => {
     : 0;
 };
 
-export const renderAddress = (info: any) => {
+export const renderAddress = (info: ActorInfo) => {
   const parts = [
     info?.address?.['street-address'],
     info?.address?.locality,
