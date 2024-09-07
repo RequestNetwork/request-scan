@@ -1,15 +1,36 @@
 /** @format */
+'use client';
 
-import { Invoice } from '@requestnetwork/data-format';
-import { calculateItemTotal } from '@requestnetwork/shared';
+import { Invoice, InvoiceItem } from '@requestnetwork/data-format';
 import { formatUnits, isAddress } from 'viem';
-import Html from 'react-pdf-html';
-import { Document, Page, pdf } from '@react-pdf/renderer';
 import { currencyManager } from '../currency-manager';
-import { saveAs } from 'file-saver';
 import { renderAddress } from '../utils';
 
-export function useExportPDF() {
+declare global {
+  interface Window {
+    html2pdf: any;
+  }
+}
+
+export default function useExportPDF() {
+  const loadScript = (src: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+      document.head.appendChild(script);
+    });
+  };
+
+  const ensureHtml2PdfLoaded = async () => {
+    if (typeof window.html2pdf === 'undefined') {
+      await loadScript(
+        'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+      );
+    }
+  };
+
   const formatDate = (date: string | undefined) => {
     return date ? new Date(date).toLocaleDateString() : '-';
   };
@@ -23,6 +44,14 @@ export function useExportPDF() {
     return currencyDetails;
   };
 
+  const calculateItemTotal = (item: InvoiceItem): number => {
+    const discountAmount = Number(item?.discount);
+    const priceAfterDiscount = Number(item?.unitPrice) - discountAmount;
+    const taxAmount = priceAfterDiscount * (Number(item?.tax?.amount) / 100);
+    const itemTotal = (priceAfterDiscount + taxAmount) * item.quantity;
+    return itemTotal;
+  };
+
   const exportPDF = async (
     invoice: Invoice & {
       currency: any;
@@ -32,6 +61,8 @@ export function useExportPDF() {
       expectedAmount: any;
     },
   ) => {
+    await ensureHtml2PdfLoaded();
+
     const currencyDetails = getCurrencyDetails(invoice.currencyInfo?.value);
 
     const content = `
@@ -150,19 +181,29 @@ export function useExportPDF() {
     </html>
   `;
 
-    const MyDocument = () => (
-      <Document>
-        <Page>
-          <Html>{content}</Html>
-        </Page>
-      </Document>
-    );
+    const opt = {
+      margin: 10,
+      filename: `invoice-${invoice.invoiceNumber || 'unknown'}.pdf`,
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+      },
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
+        orientation: 'portrait',
+        compress: true,
+      },
+    };
 
-    const doc = <MyDocument />;
-    const asPdf = pdf();
-    asPdf.updateContainer(doc);
-    const blob = await asPdf.toBlob();
-    saveAs(blob, `invoice-${invoice.invoiceNumber}.pdf`);
+    const element = document.createElement('div');
+    element.innerHTML = content;
+    document.body.appendChild(element);
+
+    await window.html2pdf().from(element).set(opt).save();
+
+    document.body.removeChild(element);
   };
 
   return {

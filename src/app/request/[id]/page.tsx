@@ -31,7 +31,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import TimeAgo from 'timeago-react';
 import { JsonEditor } from 'json-edit-react';
-import { useExportPDF } from '@/lib/hooks/use-export-pdf';
+import useExportPDF from '@/lib/hooks/use-export-pdf';
 
 interface RequestPageProps {
   params: {
