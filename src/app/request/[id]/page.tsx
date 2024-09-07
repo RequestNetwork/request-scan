@@ -50,7 +50,7 @@ const ActorInfoSection = ({ actorInfo }: { actorInfo?: ActorInfo }) => {
   }
 
   return (
-    <div className="grid gap-3 bg-muted/50 rounded-md p-2">
+    <div className="grid gap-3 bg-muted/50 rounded-md p-2 overflow-x-scroll">
       <ul className="grid gap-3">
         {actorInfo?.businessName && (
           <li className="flex items-center justify-start gap-2">
@@ -208,7 +208,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
               </CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="p-6 text-sm">
+          <CardContent className="p-6 text-sm overflow-x-scroll">
             <table className="border-separate border-spacing-y-3">
               <tbody>
                 <tr>
