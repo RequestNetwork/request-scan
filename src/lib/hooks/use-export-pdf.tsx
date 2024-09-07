@@ -162,7 +162,7 @@ export default function useExportPDF() {
             <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>Due:</strong></td>
             <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>${
               invoice.expectedAmount
-                ? `${formatUnits(BigInt(invoice.expectedAmount), currencyDetails?.decimals || 0)} ${invoice.currency || ''}`
+                ? `${formatUnits(BigInt(invoice.expectedAmount), currencyDetails?.decimals || 0)} ${currencyDetails?.symbol || ''}`
                 : '-'
             }</strong></td>
           </tr>
