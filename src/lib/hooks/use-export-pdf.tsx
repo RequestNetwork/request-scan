@@ -45,9 +45,10 @@ export default function useExportPDF() {
   };
 
   const calculateItemTotal = (item: InvoiceItem): number => {
-    const discountAmount = Number(item?.discount);
-    const priceAfterDiscount = Number(item?.unitPrice) - discountAmount;
-    const taxAmount = priceAfterDiscount * (Number(item?.tax?.amount) / 100);
+    const { discount = 0, unitPrice = 0, tax = { amount: 0 } } = item;
+    const discountAmount = Number(discount);
+    const priceAfterDiscount = Number(unitPrice) - discountAmount;
+    const taxAmount = priceAfterDiscount * (Number(tax.amount) / 100);
     const itemTotal = (priceAfterDiscount + taxAmount) * item.quantity;
     return itemTotal;
   };
@@ -161,7 +162,7 @@ export default function useExportPDF() {
             <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>Due:</strong></td>
             <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>${
               invoice.expectedAmount
-                ? `${formatUnits(BigInt(invoice.expectedAmount), currencyDetails?.decimals || 0)} ${invoice.currency || ''}`
+                ? `${formatUnits(BigInt(invoice.expectedAmount), currencyDetails?.decimals || 0)} ${currencyDetails?.symbol || ''}`
                 : '-'
             }</strong></td>
           </tr>
