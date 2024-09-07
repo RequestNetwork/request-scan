@@ -146,7 +146,6 @@ export const getContentDataFromCreateTransaction = (
 ) => {
   const extensionData = createParameters.extensionsData;
   const contentData: Invoice =
-    extensionData &&
     extensionData?.find((extension) => extension.id === 'content-data')
       ?.parameters?.content;
 
