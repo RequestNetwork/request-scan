@@ -71,7 +71,7 @@ export default function useExportPDF() {
     <head>
     </head>
     <body>
-    <div id="invoice" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <div id="invoice" style="max-width: 800px; margin: 0 auto; padding: 5px;">
       <div style="display: flex; justify-content: space-between; align-items: start;">
         <div style="text-align: right;">
           <p>Issued on ${formatDate(invoice?.creationDate)}</p>
@@ -83,7 +83,7 @@ export default function useExportPDF() {
         invoice?.invoiceNumber || '-'
       }</h1>
 
-      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background-color: #FBFBFB; padding: 10px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background-color: #FBFBFB; padding: 5px; gap:2%;">
         <div>
           <strong>From:</strong><br>
           <p style="font-size: 14px">${invoice.payee?.value || '-'}</p>
