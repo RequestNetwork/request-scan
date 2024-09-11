@@ -5,7 +5,7 @@ import { graphQLClient } from '../graphQlClient';
 import { Channel, Transaction } from '../types';
 
 export const CHANNEL_QUERY = gql`
-  query ChannelQuery($id: ID!) {
+  query ChannelQuery($id: ID!) @cached {
     storage {
       channel(id: $id) {
         id

@@ -40,7 +40,7 @@ export const useLatestPayments = ({
   const { status, isLoading, data, isFetching } = useQuery({
     queryKey: ['payments', first, skip],
     queryFn: () => fetchPayments({ first, skip }),
-    refetchInterval: pollInterval,
+    refetchInterval: pollInterval === 0 ? false : pollInterval,
     placeholderData: commonQueryOptions.placeholderData,
     staleTime: commonQueryOptions.staleTime,
     initialData: prefetchedData,

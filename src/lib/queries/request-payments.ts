@@ -9,7 +9,7 @@ import { CORE_PAYMENT_FIELDS } from './utils';
 export const REQUEST_PAYMENTS_QUERY = gql`
   ${CORE_PAYMENT_FIELDS}
 
-  query RequestPaymentsQuery($reference: Bytes!) {
+  query RequestPaymentsQuery($reference: Bytes!) @cached {
     #
     payment_mainnet {
       payments(
