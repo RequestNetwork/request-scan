@@ -23,7 +23,11 @@ import {
 } from '@/components/ui/table';
 import { Transaction } from '@/lib/types';
 import TimeAgo from 'timeago-react';
-import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
+import {
+  calculateShortPaymentReference,
+  formatTimestamp,
+  getAmountWithCurrencySymbol,
+} from '@/lib/utils';
 import Link from 'next/link';
 import truncateEthAddress from 'truncate-eth-address';
 import { Dispatch, SetStateAction } from 'react';
@@ -42,8 +46,21 @@ export const columns: ColumnDef<Transaction>[] = [
     ),
   },
   {
+    accessorKey: 'paymentReference',
+    header: 'Payment Reference',
+    cell: ({ row }) => {
+      return calculateShortPaymentReference(
+        row.original.channelId,
+        row.original?.dataObject.data.parameters.extensionsData[0].parameters
+          .salt || '',
+        row.original?.dataObject.data.parameters.extensionsData[0].parameters
+          .paymentAddress || '',
+      );
+    },
+  },
+  {
     accessorKey: 'blockTimestamp',
-    header: 'Timestamp',
+    header: 'Created',
     cell: ({ row }) => (
       <div className="lowercase">
         <TimeAgo
@@ -59,7 +76,16 @@ export const columns: ColumnDef<Transaction>[] = [
     header: 'Payee',
     cell: ({ row }: { row: any }) => {
       const address = row.original?.dataObject?.data?.parameters?.payee?.value;
-      return address ? truncateEthAddress(address) : 'N/A';
+
+      return address ? (
+        <div className="font-medium text-emerald-700">
+          <Link href={`/address/${address}`}>
+            {truncateEthAddress(address)}
+          </Link>
+        </div>
+      ) : (
+        'N/A'
+      );
     },
   },
   {
@@ -67,7 +93,15 @@ export const columns: ColumnDef<Transaction>[] = [
     header: 'Payer',
     cell: ({ row }: { row: any }) => {
       const address = row.original?.dataObject?.data?.parameters?.payer?.value;
-      return address ? truncateEthAddress(address) : 'N/A';
+      return address ? (
+        <div className="font-medium text-emerald-700">
+          <Link href={`/address/${address}`}>
+            {truncateEthAddress(address)}
+          </Link>
+        </div>
+      ) : (
+        'N/A'
+      );
     },
   },
   {

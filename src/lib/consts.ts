@@ -45,7 +45,7 @@ export const CHAIN_SCAN_URLS = {
   [CHAINS.MOONBEAM]: 'https://moonbeam-explorer.netlify.app',
   [CHAINS.OPTIMISM]: 'https://optimistic.etherscan.io',
   [CHAINS.SEPOLIA]: 'https://sepolia.etherscan.io',
-  [CHAINS.XDAI]: 'https://blockscout.com/xdai/mainnet',
+  [CHAINS.XDAI]: 'https://gnosisscan.io',
   [CHAINS.ZKSYNCERA]: 'https://explorer.zksync.io',
 };
 

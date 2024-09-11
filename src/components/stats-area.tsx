@@ -14,7 +14,7 @@ export function StatsArea() {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">$700+ Million</div>
+          <div className="text-2xl font-bold">$800+ Million</div>
         </CardContent>
       </Card>
       <Card>
