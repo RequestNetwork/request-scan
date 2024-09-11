@@ -184,17 +184,19 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
           <CardHeader className="flex flex-row items-start bg-muted/50">
             <div className="grid gap-0.5 w-full">
               <CardTitle className="group flex items-center gap-2 text-lg break-all w-full justify-between">
-                Request {id}
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                  onClick={() => {
-                    navigator.clipboard.writeText(id);
-                  }}
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
+                <div className="flex gap-2 items-center">
+                  Request {id}
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
+                    onClick={() => {
+                      navigator.clipboard.writeText(id);
+                    }}
+                  >
+                    <Copy className="h-3 w-3" />
+                  </Button>
+                </div>
                 <Button
                   size="sm"
                   className="h-8 gap-1"
