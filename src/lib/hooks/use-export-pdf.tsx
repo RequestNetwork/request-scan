@@ -86,7 +86,7 @@ export default function useExportPDF() {
       <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background-color: #FBFBFB; padding: 5px; gap:2%;">
         <div>
           <strong>From:</strong><br>
-          <p style="font-size: 14px">${invoice.payee?.value || '-'}</p>
+          <p style="font-size: 12px">${invoice.payee?.value || '-'}</p>
           ${invoice?.sellerInfo?.firstName || ''} ${invoice?.sellerInfo?.lastName || ''}<br>
           ${renderAddress(invoice?.sellerInfo)}<br>
           ${invoice?.sellerInfo?.taxRegistration ? `VAT: ${invoice.sellerInfo.taxRegistration}` : ''}
@@ -94,7 +94,7 @@ export default function useExportPDF() {
 
         <div>
           <strong>To:</strong><br>
-          <p style="font-size: 14px">${invoice.payer?.value || '-'}</p>
+          <p style="font-size: 12px">${invoice.payer?.value || '-'}</p>
           ${invoice?.buyerInfo?.firstName || ''} ${invoice?.buyerInfo?.lastName || ''}<br>
           ${renderAddress(invoice?.buyerInfo)}<br>
           ${invoice?.buyerInfo?.taxRegistration ? `VAT: ${invoice.buyerInfo.taxRegistration}` : ''}
