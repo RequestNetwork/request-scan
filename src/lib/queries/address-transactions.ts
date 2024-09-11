@@ -12,7 +12,7 @@ export const ADDRESS_TRANSACTIONS_QUERY = gql`
     $skip: Int!
     $checksumAddress: String
     $lowercaseAddress: String
-  ) {
+  ) @cached {
     storage {
       transactions(
         first: $first

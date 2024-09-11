@@ -45,7 +45,7 @@ export const useLatestRequests = ({
   const { status, isLoading, data, isFetching } = useQuery({
     queryKey: ['requests', first, skip],
     queryFn: () => fetchRequests({ first, skip }),
-    refetchInterval: pollInterval,
+    refetchInterval: pollInterval === 0 ? false : pollInterval,
     placeholderData: commonQueryOptions.placeholderData,
     staleTime: commonQueryOptions.staleTime,
     initialData: prefetchedData,
