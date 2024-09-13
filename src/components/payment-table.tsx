@@ -23,10 +23,13 @@ import {
 } from '@/components/ui/table';
 import { Payment } from '@/lib/types';
 import TimeAgo from 'timeago-react';
-import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
+import {
+  formatTimestamp,
+  getAmountWithCurrencySymbol,
+  safeTruncateEthAddress,
+} from '@/lib/utils';
 import Link from 'next/link';
 import { formatUnits } from 'viem';
-import truncateEthAddress from 'truncate-eth-address';
 import { CHAIN_SCAN_URLS } from '@/lib/consts';
 import { Dispatch, SetStateAction } from 'react';
 import { Skeleton } from './ui/skeleton';
@@ -75,7 +78,7 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
         <Link href={`/address/${row.getValue('from')}`}>
-          {truncateEthAddress(row.getValue('from') || '')}
+          {safeTruncateEthAddress(row.getValue('from'))}
         </Link>
       </div>
     ),
@@ -86,7 +89,7 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
         <Link href={`/address/${row.getValue('to')}`}>
-          {truncateEthAddress(row.getValue('to') || '')}
+          {safeTruncateEthAddress(row.getValue('to'))}
         </Link>
       </div>
     ),
@@ -119,7 +122,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'feeAddress',
     header: 'Service Fee Address',
-    cell: ({ row }) => truncateEthAddress(row.getValue('feeAddress') || ''),
+    cell: ({ row }) => safeTruncateEthAddress(row.getValue('feeAddress')),
   },
 ];
 

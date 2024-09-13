@@ -27,9 +27,9 @@ import {
   calculateShortPaymentReference,
   formatTimestamp,
   getAmountWithCurrencySymbol,
+  safeTruncateEthAddress,
 } from '@/lib/utils';
 import Link from 'next/link';
-import truncateEthAddress from 'truncate-eth-address';
 import { Dispatch, SetStateAction } from 'react';
 import { Skeleton } from './ui/skeleton';
 
@@ -80,7 +80,7 @@ export const columns: ColumnDef<Transaction>[] = [
       return address ? (
         <div className="font-medium text-emerald-700">
           <Link href={`/address/${address}`}>
-            {truncateEthAddress(address || '')}
+            {safeTruncateEthAddress(address)}
           </Link>
         </div>
       ) : (
@@ -96,7 +96,7 @@ export const columns: ColumnDef<Transaction>[] = [
       return address ? (
         <div className="font-medium text-emerald-700">
           <Link href={`/address/${address}`}>
-            {truncateEthAddress(address || '')}
+            {safeTruncateEthAddress(address)}
           </Link>
         </div>
       ) : (

@@ -12,6 +12,7 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { PaymentReferenceCalculator } from '@requestnetwork/request-client.js';
 import { RequestLogicTypes } from '@requestnetwork/types';
 import { ActorInfo, Invoice } from '@requestnetwork/data-format';
+import truncateEthAddress from 'truncate-eth-address';
 
 timeago.register('en_short', en_short);
 
@@ -145,9 +146,9 @@ export const getContentDataFromCreateTransaction = (
   createParameters: RequestLogicTypes.ICreateParameters,
 ) => {
   const extensionData = createParameters.extensionsData;
-  const contentData: Invoice =
-    extensionData?.find((extension) => extension.id === 'content-data')
-      ?.parameters?.content;
+  const contentData: Invoice = extensionData?.find(
+    (extension) => extension.id === 'content-data',
+  )?.parameters?.content;
 
   return contentData;
 };
@@ -169,3 +170,6 @@ export const renderAddress = (info: ActorInfo | undefined) => {
   ].filter(Boolean);
   return parts.length > 0 ? parts.join(', ') : '-';
 };
+
+export const safeTruncateEthAddress = (address: string) =>
+  truncateEthAddress(address || '');
