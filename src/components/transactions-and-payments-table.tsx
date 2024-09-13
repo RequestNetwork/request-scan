@@ -10,10 +10,13 @@ import {
 } from '@/components/ui/table';
 import { CHAIN_SCAN_URLS } from '@/lib/consts';
 import { Payment, Transaction } from '@/lib/types';
-import { formatTimestamp, getAmountWithCurrencySymbol } from '@/lib/utils';
+import {
+  formatTimestamp,
+  getAmountWithCurrencySymbol,
+  safeTruncateEthAddress,
+} from '@/lib/utils';
 import Link from 'next/link';
 import TimeAgo from 'timeago-react';
-import truncateEthAddress from 'truncate-eth-address';
 import { formatUnits } from 'viem';
 
 interface Props {
@@ -82,7 +85,7 @@ export function TransactionsAndPaymentsTable({
               {'from' in item ? (
                 <div className="font-medium text-emerald-700">
                   <Link href={`/address/${item.from}`}>
-                    {truncateEthAddress(item.from)}{' '}
+                    {safeTruncateEthAddress(item.from)}{' '}
                   </Link>
                 </div>
               ) : (
@@ -93,7 +96,7 @@ export function TransactionsAndPaymentsTable({
               {'to' in item ? (
                 <div className="font-medium text-emerald-700">
                   <Link href={`/address/${item.to}`}>
-                    {truncateEthAddress(item.to)}{' '}
+                    {safeTruncateEthAddress(item.to)}{' '}
                   </Link>
                 </div>
               ) : (
