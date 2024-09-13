@@ -82,7 +82,7 @@ export function TransactionsAndPaymentsTable({
               {'from' in item ? (
                 <div className="font-medium text-emerald-700">
                   <Link href={`/address/${item.from}`}>
-                    {truncateEthAddress(item.from)}{' '}
+                    {truncateEthAddress(item.from || '')}{' '}
                   </Link>
                 </div>
               ) : (
@@ -93,7 +93,7 @@ export function TransactionsAndPaymentsTable({
               {'to' in item ? (
                 <div className="font-medium text-emerald-700">
                   <Link href={`/address/${item.to}`}>
-                    {truncateEthAddress(item.to)}{' '}
+                    {truncateEthAddress(item.to || '')}{' '}
                   </Link>
                 </div>
               ) : (

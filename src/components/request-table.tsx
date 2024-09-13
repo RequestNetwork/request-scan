@@ -80,7 +80,7 @@ export const columns: ColumnDef<Transaction>[] = [
       return address ? (
         <div className="font-medium text-emerald-700">
           <Link href={`/address/${address}`}>
-            {truncateEthAddress(address)}
+            {truncateEthAddress(address || '')}
           </Link>
         </div>
       ) : (
@@ -96,7 +96,7 @@ export const columns: ColumnDef<Transaction>[] = [
       return address ? (
         <div className="font-medium text-emerald-700">
           <Link href={`/address/${address}`}>
-            {truncateEthAddress(address)}
+            {truncateEthAddress(address || '')}
           </Link>
         </div>
       ) : (

@@ -75,7 +75,7 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
         <Link href={`/address/${row.getValue('from')}`}>
-          {truncateEthAddress(row.getValue('from'))}
+          {truncateEthAddress(row.getValue('from') || '')}
         </Link>
       </div>
     ),
@@ -86,7 +86,7 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
         <Link href={`/address/${row.getValue('to')}`}>
-          {truncateEthAddress(row.getValue('to'))}
+          {truncateEthAddress(row.getValue('to') || '')}
         </Link>
       </div>
     ),
@@ -119,7 +119,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'feeAddress',
     header: 'Service Fee Address',
-    cell: ({ row }) => truncateEthAddress(row.getValue('feeAddress')),
+    cell: ({ row }) => truncateEthAddress(row.getValue('feeAddress') || ''),
   },
 ];
 
