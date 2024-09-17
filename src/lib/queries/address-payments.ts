@@ -42,6 +42,17 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         ...PaymentFields
       }
     }
+    payment_base {
+      payments(
+        first: $first
+        skip: $skip
+        orderBy: timestamp
+        orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
+      ) {
+        ...PaymentFields
+      }
+    }
     payment_bsc {
       payments(
         first: $first
