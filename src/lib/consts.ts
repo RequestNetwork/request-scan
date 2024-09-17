@@ -4,6 +4,7 @@ import { createPublicClient, http } from 'viem';
 import {
   arbitrum,
   avalanche,
+  base,
   bsc,
   celo,
   fantom,
@@ -21,6 +22,7 @@ export const CHAINS = {
   MAINNET: 'mainnet',
   ARBITRUM_ONE: 'arbitrum_one',
   AVALANCHE: 'avalanche',
+  BASE: 'base',
   BSC: 'bsc',
   CELO: 'celo',
   FANTOM: 'fantom',
@@ -37,6 +39,7 @@ export const CHAIN_SCAN_URLS = {
   [CHAINS.MAINNET]: 'https://etherscan.io',
   [CHAINS.ARBITRUM_ONE]: 'https://arbiscan.io',
   [CHAINS.AVALANCHE]: 'https://cchain.explorer.avax.network',
+  [CHAINS.BASE]: 'https://basescan.org',
   [CHAINS.BSC]: 'https://bscscan.com',
   [CHAINS.CELO]: 'https://explorer.celo.org',
   [CHAINS.FANTOM]: 'https://ftmscan.com',
@@ -53,6 +56,7 @@ export enum PAYMENT_CHAINS {
   MAINNET = 'payment_mainnet',
   ARBITRUM_ONE = 'payment_arbitrum_one',
   AVALANCHE = 'payment_avalanche',
+  BASE = 'payment_base',
   BSC = 'payment_bsc',
   CELO = 'payment_celo',
   FANTOM = 'payment_fantom',
@@ -76,6 +80,10 @@ export const PUBLIC_CLIENTS = {
   }),
   [CHAINS.AVALANCHE]: createPublicClient({
     chain: avalanche,
+    transport: http(),
+  }),
+  [CHAINS.BASE]: createPublicClient({
+    chain: base,
     transport: http(),
   }),
   [CHAINS.BSC]: createPublicClient({

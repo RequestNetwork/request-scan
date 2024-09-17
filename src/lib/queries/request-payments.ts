@@ -38,6 +38,15 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         ...PaymentFields
       }
     }
+    payment_base {
+      payments(
+        where: { reference: $reference }
+        orderBy: timestamp
+        orderDirection: desc
+      ) {
+        ...PaymentFields
+      }
+    }
     payment_bsc {
       payments(
         where: { reference: $reference }

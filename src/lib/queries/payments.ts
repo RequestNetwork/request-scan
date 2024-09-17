@@ -40,6 +40,16 @@ export const PAYMENTS_QUERY = gql`
         ...PaymentFields
       }
     }
+    payment_base {
+      payments(
+        first: $first
+        skip: $skip
+        orderBy: timestamp
+        orderDirection: desc
+      ) {
+        ...PaymentFields
+      }
+    }
     payment_bsc {
       payments(
         first: $first

@@ -94,6 +94,9 @@ export const formatPaymentData = (
         ...data.payment_avalanche.payments.map((payment: any) =>
           mapPaymentToChain(payment, CHAINS.AVALANCHE),
         ),
+        ...data.payment_base.payments.map((payment: any) =>
+          mapPaymentToChain(payment, CHAINS.BASE),
+        ),
         ...data.payment_bsc.payments.map((payment: any) =>
           mapPaymentToChain(payment, CHAINS.BSC),
         ),
