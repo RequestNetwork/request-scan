@@ -57,20 +57,19 @@ export const getAmountWithCurrencySymbol = (
  * @param requestId The requestId
  * @param salt The salt for the request
  * @param address Payment or refund address
+ * @returns A string starting with '0x' if successful, or undefined if an error occurs during calculation.
  */
-
 export function calculateShortPaymentReference(
   requestId: string,
   salt: string,
   address: string,
-): `0x${string}` | string {
+): `0x${string}` | undefined {
   try {
     return `0x${PaymentReferenceCalculator.calculate(requestId, salt, address)}`;
-
   } catch (error) {
     console.error('Error calculating short payment reference', error);
-    return '';
-  } 
+    return undefined;
+  }
 }
 
 export const calculateLongPaymentReference = (
