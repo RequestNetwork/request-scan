@@ -63,13 +63,13 @@ export function calculateShortPaymentReference(
   requestId: string,
   salt: string,
   address: string,
-): `0x${string}` | string {
+): `0x${string}` {
   try {
     return `0x${PaymentReferenceCalculator.calculate(requestId, salt, address)}`;
 
   } catch (error) {
     console.error('Error calculating short payment reference', error);
-    return '';
+    return '0x';
   } 
 }
 
