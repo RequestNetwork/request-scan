@@ -161,6 +161,13 @@ export const getContentDataFromCreateTransaction = (
   return contentData;
 };
 
+export const getPaymentDataFromCreateTransaction = (
+  createParameters: RequestLogicTypes.ICreateParameters,
+) => {
+  const extensionData = createParameters?.extensionsData!;
+  return extensionData[0]?.parameters;
+};
+
 export const getBalance = (payments: Payment[] | undefined) => {
   return payments
     ? payments
@@ -181,3 +188,5 @@ export const renderAddress = (info: ActorInfo | undefined) => {
 
 export const safeTruncateEthAddress = (address: string) =>
   truncateEthAddress(address || '');
+
+export const capitalize = (str: string) => (str && str[0].toUpperCase() + str.slice(1)) || ""

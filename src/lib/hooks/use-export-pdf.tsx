@@ -4,13 +4,17 @@
 import { Invoice, InvoiceItem } from '@requestnetwork/data-format';
 import { formatUnits, isAddress } from 'viem';
 import { currencyManager } from '../currency-manager';
-import { renderAddress } from '../utils';
+import { capitalize, renderAddress } from '../utils';
+import { PaymentData } from '../types'
 
 declare global {
   interface Window {
     html2pdf: any;
   }
 }
+const RENDER_DELAY_MS = 3000; // Define this at the top of the file or in a config
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function useExportPDF() {
   const loadScript = (src: string): Promise<void> => {
@@ -60,11 +64,17 @@ export default function useExportPDF() {
       payer: any;
       payee: any;
       expectedAmount: any;
+      paymentData: PaymentData;
     },
   ) => {
     await ensureHtml2PdfLoaded();
 
     const currencyDetails = getCurrencyDetails(invoice.currencyInfo?.value);
+    const paymentCurrencyDetails = getCurrencyDetails(
+      invoice.paymentData?.acceptedTokens?.length > 0
+        ? invoice.paymentData.acceptedTokens[0]
+        : undefined
+    );
 
     const content = `
     <html>
@@ -102,8 +112,9 @@ export default function useExportPDF() {
       </div>
       
       <div style="margin-bottom: 20px;">
-        <strong>Payment Chain:</strong> ${invoice.currencyInfo?.network || '-'}<br>
+        <strong>Payment Chain:</strong> ${invoice?.paymentData?.network ? capitalize(invoice?.paymentData?.network) : '-'}<br>
         <strong>Invoice Currency:</strong> ${currencyDetails?.symbol || '-'}<br>
+        <strong>Settlement Currency:</strong> ${paymentCurrencyDetails?.symbol || "-"}<br>
         <strong>Invoice Type:</strong> Regular Invoice
       </div>
       
@@ -201,6 +212,9 @@ export default function useExportPDF() {
     const element = document.createElement('div');
     element.innerHTML = content;
     document.body.appendChild(element);
+
+    // add a delay to ensure the content is rendered before exporting
+    await sleep(RENDER_DELAY_MS);
 
     await window.html2pdf().from(element).set(opt).save();
 

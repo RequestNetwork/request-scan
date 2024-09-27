@@ -40,3 +40,7 @@ export interface Channel {
   topics: string[];
   transactions: Transaction[];
 }
+export interface PaymentData {
+  acceptedTokens: string[];
+  network: string;
+}
