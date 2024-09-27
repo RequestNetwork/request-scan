@@ -220,6 +220,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   size="sm"
                   className="h-8 gap-1"
                   onClick={handleExportPDF}
+                  disabled={isDownloading}
                 >
                   {isDownloading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -315,7 +316,11 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 </tr>
                 <tr>
                   <td className="text-muted-foreground">Blockchain:</td>
-                  <td className="pl-16">{capitalize(paymentData?.network)}</td>
+                  <td className="pl-16">
+                    {paymentData?.network
+                      ? capitalize(paymentData?.network)
+                      : ''}
+                  </td>
                 </tr>
                 <tr>
                   <td className="text-muted-foreground">Raw Content Data:</td>

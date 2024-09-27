@@ -112,7 +112,7 @@ export default function useExportPDF() {
       </div>
       
       <div style="margin-bottom: 20px;">
-        <strong>Payment Chain:</strong> ${capitalize(invoice?.paymentData?.network) || '-'}<br>
+        <strong>Payment Chain:</strong> ${invoice?.paymentData?.network ? capitalize(invoice?.paymentData?.network) : '-'}<br>
         <strong>Invoice Currency:</strong> ${currencyDetails?.symbol || '-'}<br>
         <strong>Settlement Currency:</strong> ${paymentCurrencyDetails?.symbol || "-"}<br>
         <strong>Invoice Type:</strong> Regular Invoice
