@@ -188,3 +188,5 @@ export const renderAddress = (info: ActorInfo | undefined) => {
 
 export const safeTruncateEthAddress = (address: string) =>
   truncateEthAddress(address || '');
+
+export const capitalize = (str: string) => (str && str[0].toUpperCase() + str.slice(1)) || ""
