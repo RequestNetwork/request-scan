@@ -12,6 +12,8 @@ declare global {
   }
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function useExportPDF() {
   const loadScript = (src: string): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -60,11 +62,13 @@ export default function useExportPDF() {
       payer: any;
       payee: any;
       expectedAmount: any;
+      paymentData: any;
     },
   ) => {
     await ensureHtml2PdfLoaded();
 
     const currencyDetails = getCurrencyDetails(invoice.currencyInfo?.value);
+    const paymentCurrencyDetails = getCurrencyDetails(invoice.paymentData?.acceptedTokens[0]);
 
     const content = `
     <html>
@@ -102,8 +106,9 @@ export default function useExportPDF() {
       </div>
       
       <div style="margin-bottom: 20px;">
-        <strong>Payment Chain:</strong> ${invoice.currencyInfo?.network || '-'}<br>
+        <strong>Payment Chain:</strong> ${ invoice?.paymentData?.network?.charAt(0).toUpperCase() + invoice?.paymentData?.network?.slice(1) || '-'}<br>
         <strong>Invoice Currency:</strong> ${currencyDetails?.symbol || '-'}<br>
+        <strong>Settlement Currency:</strong> ${paymentCurrencyDetails?.symbol || "-"}<br>
         <strong>Invoice Type:</strong> Regular Invoice
       </div>
       
@@ -201,6 +206,9 @@ export default function useExportPDF() {
     const element = document.createElement('div');
     element.innerHTML = content;
     document.body.appendChild(element);
+
+    // add a delay to ensure the content is rendered before exporting
+    await sleep(3000);
 
     await window.html2pdf().from(element).set(opt).save();
 

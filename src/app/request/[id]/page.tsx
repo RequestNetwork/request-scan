@@ -21,17 +21,19 @@ import {
   getAmountWithCurrencySymbol,
   getBalance,
   getContentDataFromCreateTransaction,
+  getPaymentDataFromCreateTransaction,
   getTransactionCreateParameters,
   renderAddress,
 } from '@/lib/utils';
 import { ActorInfo } from '@requestnetwork/data-format';
 import { useQuery } from '@tanstack/react-query';
-import { Copy, File } from 'lucide-react';
+import { Copy, File, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import TimeAgo from 'timeago-react';
 import { JsonEditor } from 'json-edit-react';
 import useExportPDF from '@/lib/hooks/use-export-pdf';
+import { useState } from 'react'
 
 interface RequestPageProps {
   params: {
@@ -107,6 +109,7 @@ const ActorInfoSection = ({ actorInfo }: { actorInfo?: ActorInfo }) => {
 
 export default function RequestPage({ params: { id } }: RequestPageProps) {
   const { exportPDF } = useExportPDF();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const { data: request, isLoading: isLoadingRequest } = useQuery({
     queryKey: ['request', id],
@@ -148,9 +151,12 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
     request?.transactions[request.transactions.length - 1];
 
   const balance = getBalance(requestPayments);
+  const balanceCurrency = requestPayments?.[0]?.tokenAddress;
 
   const createParameters = getTransactionCreateParameters(firstTransaction);
   const contentData = getContentDataFromCreateTransaction(createParameters);
+  const paymentData = getPaymentDataFromCreateTransaction(createParameters);
+
   const buyerData = contentData?.buyerInfo;
   const sellerData = contentData?.sellerInfo;
 
@@ -166,15 +172,18 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
       ? requestPayments[requestPayments?.length - 1]?.timestamp
       : lastTransaction?.blockTimestamp;
 
-  const handleExportPDF = () => {
-    exportPDF({
+  const handleExportPDF = async () => {
+    setIsDownloading(true);
+    await exportPDF({
       ...contentData,
       currency: createParameters.currency,
       currencyInfo: createParameters.currency,
       payer: createParameters.payer,
       payee: createParameters.payee,
       expectedAmount: createParameters.expectedAmount,
+      paymentData,
     });
+    setIsDownloading(false);
   };
 
   return (
@@ -202,6 +211,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   className="h-8 gap-1"
                   onClick={handleExportPDF}
                 >
+                  {isDownloading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   <File className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                     Export PDF
@@ -263,7 +273,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="pl-16">
                     {getAmountWithCurrencySymbol(
                       BigInt(balance),
-                      createParameters.currency.value,
+                      balanceCurrency || '',
                     )}
                   </td>
                 </tr>
@@ -294,7 +304,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 <tr>
                   <td className="text-muted-foreground">Blockchain:</td>
                   <td className="pl-16">
-                    {createParameters.currency?.network}
+                    {paymentData?.network?.charAt(0).toUpperCase() + paymentData?.network?.slice(1)}
                   </td>
                 </tr>
                 <tr>
