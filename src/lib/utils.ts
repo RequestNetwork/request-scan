@@ -171,7 +171,7 @@ export const getPaymentDataFromCreateTransaction = (
 export const getBalance = (payments: Payment[] | undefined) => {
   return payments
     ? payments
-        .map((payment) => BigInt(payment.amount))
+        .map((payment) => BigInt(payment.amountInCrypto))
         .reduce((a, b) => a + b, BigInt(0))
     : 0;
 };

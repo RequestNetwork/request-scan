@@ -95,11 +95,11 @@ export const columns: ColumnDef<Payment>[] = [
     ),
   },
   {
-    accessorKey: 'amount',
+    accessorKey: 'amountInCrypto',
     header: 'Amount',
     cell: ({ row }) =>
       getAmountWithCurrencySymbol(
-        row.getValue('amount'),
+        row.getValue('amountInCrypto'),
         row.original?.tokenAddress,
       ),
   },
