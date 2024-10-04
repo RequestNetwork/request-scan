@@ -1,8 +1,9 @@
 /** @format */
 
-import { Logo } from './logo';
-import { MainNav } from './main-nav';
-import { Socials } from './socials';
+import { Logo } from "./logo";
+import { MainNav } from "./main-nav";
+import { Socials } from "./socials";
+import VersionDisplay from "./ui/version-badge";
 
 export function Footer() {
   return (
@@ -12,7 +13,8 @@ export function Footer() {
         <Socials color="white" />
         <MainNav className="mx-3 text-white" hoverClass="hover:text-black" />
       </div>
-      <div>
+      <div className="flex flex-col gap-2">
+        <VersionDisplay githubRelease="https://github.com/RequestNetwork/request-scan/releases" />
         <p className="text-end text-sm text-white">© 2024 Request Network</p>
       </div>
     </div>
