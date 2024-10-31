@@ -110,7 +110,7 @@ export function TransactionsAndPaymentsTable({
                     item?.dataObject?.data?.parameters?.currency?.value,
                   )
                 : getAmountWithCurrencySymbol(
-                    BigInt(item?.amount),
+                    BigInt(item?.amountInCrypto),
                     item?.tokenAddress,
                   )}
             </TableCell>
