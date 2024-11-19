@@ -47,7 +47,7 @@ export function RecentSRFDeploymentsTable() {
           </CardDescription>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
-          <Link href="/proxy-deployments">
+          <Link href="/single-request-forwarders">
             View All
             <ArrowUpRight className="h-4 w-4" />
           </Link>
