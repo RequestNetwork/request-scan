@@ -1,18 +1,18 @@
 /** @format */
-'use client';
+"use client";
 
-import { TransactionsAndPaymentsTable } from '@/components/transactions-and-payments-table';
-import { Button } from '@/components/ui/button';
+import { TransactionsAndPaymentsTable } from "@/components/transactions-and-payments-table";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardContent,
   CardFooter,
-} from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { fetchRequest } from '@/lib/queries/channel';
-import { fetchRequestPayments } from '@/lib/queries/request-payments';
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { fetchRequest } from "@/lib/queries/channel";
+import { fetchRequestPayments } from "@/lib/queries/request-payments";
 import {
   calculateLongPaymentReference,
   calculateShortPaymentReference,
@@ -25,16 +25,17 @@ import {
   getPaymentDataFromCreateTransaction,
   getTransactionCreateParameters,
   renderAddress,
-} from '@/lib/utils';
-import { ActorInfo } from '@requestnetwork/data-format';
-import { useQuery } from '@tanstack/react-query';
-import { Copy, File, Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import TimeAgo from 'timeago-react';
-import { JsonEditor } from 'json-edit-react';
-import useExportPDF from '@/lib/hooks/use-export-pdf';
-import { useState } from 'react';
+} from "@/lib/utils";
+import { ActorInfo } from "@requestnetwork/data-format";
+import { useQuery } from "@tanstack/react-query";
+import { Copy, File, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import TimeAgo from "timeago-react";
+import { JsonEditor } from "json-edit-react";
+import useExportPDF from "@/lib/hooks/use-export-pdf";
+import { useState } from "react";
+import { Channel } from "@/lib/types";
 
 interface RequestPageProps {
   params: {
@@ -42,14 +43,21 @@ interface RequestPageProps {
   };
 }
 
+const getGateway = (request: Channel | null) => {
+  if (request?.source === "storage_sepolia") {
+    return "sepolia.gateway.request.network";
+  }
+  return "gnosis.gateway.request.network";
+};
+
 const ActorInfoSection = ({ actorInfo }: { actorInfo?: ActorInfo }) => {
   if (
     !actorInfo ||
     Object.keys(actorInfo).every(
-      (k) => !Object.keys((actorInfo as any)[k]).length,
+      (k) => !Object.keys((actorInfo as any)[k]).length
     )
   ) {
-    return 'N/A';
+    return "N/A";
   }
 
   return (
@@ -113,7 +121,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const { data: request, isLoading: isLoadingRequest } = useQuery({
-    queryKey: ['request', id],
+    queryKey: ["request", id],
     queryFn: () => fetchRequest({ id }),
     ...commonQueryOptions,
   });
@@ -122,19 +130,19 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
     ? calculateShortPaymentReference(
         id,
         request?.transactions[0].dataObject.data.parameters.extensionsData[0]
-          .parameters.salt || '',
+          .parameters.salt || "",
         request?.transactions[0].dataObject.data.parameters.extensionsData[0]
-          .parameters.paymentAddress || '',
+          .parameters.paymentAddress || ""
       )
-    : '';
+    : "";
 
   const longPaymentReference = shortPaymentReference
     ? calculateLongPaymentReference(shortPaymentReference)
-    : '';
+    : "";
 
   const { data: requestPayments, isLoading: isLoadingRequestPayments } =
     useQuery({
-      queryKey: ['request-payments', longPaymentReference],
+      queryKey: ["request-payments", longPaymentReference],
       queryFn: () => fetchRequestPayments({ reference: longPaymentReference }),
       ...commonQueryOptions,
     });
@@ -144,7 +152,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   }
 
   if (!request) {
-    redirect('/not-found');
+    redirect("/not-found");
   }
 
   const firstTransaction = request?.transactions[0];
@@ -160,14 +168,14 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   const balanceCurrency =
     paymentData?.acceptedTokens?.length > 0
       ? paymentData.acceptedTokens[0]
-      : '';
+      : "";
 
   const buyerData = contentData?.buyerInfo;
   const sellerData = contentData?.sellerInfo;
 
   const status =
     balance >= BigInt(createParameters.expectedAmount)
-      ? 'Paid'
+      ? "Paid"
       : lastTransaction?.dataObject?.data?.name;
 
   const modifiedTimestamp =
@@ -190,7 +198,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
         paymentData,
       });
     } catch (error) {
-      console.error('Error exporting PDF:', error);
+      console.error("Error exporting PDF:", error);
     } finally {
       setIsDownloading(false);
     }
@@ -241,6 +249,10 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="pl-16">{status}</td>
                 </tr>
                 <tr>
+                  <td className="text-muted-foreground">Gateway:</td>
+                  <td className="pl-16">{getGateway(request)}</td>
+                </tr>
+                <tr>
                   <td className="text-muted-foreground">Payee:</td>
                   <td className="pl-16">
                     <div className="font-medium text-emerald-700 break-all">
@@ -277,7 +289,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="pl-16">
                     {getAmountWithCurrencySymbol(
                       BigInt(createParameters.expectedAmount),
-                      createParameters.currency.value,
+                      createParameters.currency.value
                     )}
                   </td>
                 </tr>
@@ -286,7 +298,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="pl-16">
                     {getAmountWithCurrencySymbol(
                       BigInt(balance),
-                      balanceCurrency || '',
+                      balanceCurrency || ""
                     )}
                   </td>
                 </tr>
@@ -296,7 +308,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                     <TimeAgo
                       datetime={firstTransaction.blockTimestamp * 1000}
                       locale="en_short"
-                    />{' '}
+                    />{" "}
                     ({formatTimestamp(firstTransaction.blockTimestamp)})
                   </td>
                 </tr>
@@ -306,7 +318,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                     <TimeAgo
                       datetime={modifiedTimestamp * 1000}
                       locale="en_short"
-                    />{' '}
+                    />{" "}
                     ({formatTimestamp(modifiedTimestamp)})
                   </td>
                 </tr>
@@ -319,7 +331,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="pl-16">
                     {paymentData?.network
                       ? capitalize(paymentData?.network)
-                      : ''}
+                      : ""}
                   </td>
                 </tr>
                 <tr>
