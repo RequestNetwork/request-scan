@@ -33,6 +33,7 @@ export interface Transaction {
   id: string;
   size: string;
   smartContractAddress: string;
+  network?: "gnosis" | "sepolia";
 }
 
 export interface SingleRequestProxyDeployment {
@@ -54,6 +55,7 @@ export interface Channel {
   id: string;
   topics: string[];
   transactions: Transaction[];
+  source?: "storage" | "storage_sepolia";
 }
 export interface PaymentData {
   acceptedTokens: string[];

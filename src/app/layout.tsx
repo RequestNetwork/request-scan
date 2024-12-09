@@ -1,20 +1,21 @@
 /** @format */
 
-import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
-import './globals.css';
-import { cn } from '@/lib/utils';
-import Header from '@/components/header';
-import { Footer } from '@/components/footer';
-import Providers from './providers';
-import { Suspense } from 'react';
+import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
+import "./globals.css";
+import { cn } from "@/lib/utils";
+import Header from "@/components/header";
+import { Footer } from "@/components/footer";
+import Providers from "./providers";
+import { Suspense } from "react";
+import { GoogleTagManager } from "@next/third-parties/google";
 
-const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-sans' });
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: 'Request Scan (The Request Network Explorer)',
+  title: "Request Scan (The Request Network Explorer)",
   description:
-    'Request Scan allows you to explore and search the Request Network for requests, payments, addresses, other activities taking place on Request Network Protocol.',
+    "Request Scan allows you to explore and search the Request Network for requests, payments, addresses, other activities taking place on Request Network Protocol.",
 };
 
 export default function RootLayout({
@@ -26,8 +27,8 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased',
-          montserrat.variable,
+          "min-h-screen bg-background font-sans antialiased",
+          montserrat.variable
         )}
       >
         <Providers>
@@ -53,6 +54,7 @@ export default function RootLayout({
           </div>
         </Providers>
       </body>
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID as string} />
     </html>
   );
 }

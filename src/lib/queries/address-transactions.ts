@@ -1,10 +1,10 @@
 /** @format */
 
-import { gql } from 'graphql-request';
-import { graphQLClient } from '../graphQlClient';
-import { Transaction } from '../types';
-import { groupBy } from '../utils';
-import { getAddress } from 'viem';
+import { gql } from "graphql-request";
+import { graphQLClient } from "../graphQlClient";
+import { Transaction } from "../types";
+import { groupBy } from "../utils";
+import { getAddress } from "viem";
 
 export const ADDRESS_TRANSACTIONS_QUERY = gql`
   query AddressTransactionsQuery(
@@ -14,6 +14,30 @@ export const ADDRESS_TRANSACTIONS_QUERY = gql`
     $lowercaseAddress: String
   ) @cached {
     storage {
+      transactions(
+        first: $first
+        skip: $skip
+        orderBy: blockNumber
+        orderDirection: desc
+        where: {
+          or: [
+            { data_contains: $checksumAddress }
+            { data_contains: $lowercaseAddress }
+          ]
+        }
+      ) {
+        blockNumber
+        blockTimestamp
+        channelId
+        data
+        dataHash
+        hash
+        id
+        size
+        smartContractAddress
+      }
+    }
+    storage_sepolia {
       transactions(
         first: $first
         skip: $skip
@@ -54,18 +78,29 @@ export const fetchAddressRequests = async (variables: {
     lowercaseAddress: variables.address.toLowerCase(),
   };
 
-  const data: { storage: { transactions: Transaction[] } } =
-    await graphQLClient.request(ADDRESS_TRANSACTIONS_QUERY, formatedVariables);
+  const data: {
+    storage: { transactions: Transaction[] };
+    storage_sepolia: { transactions: Transaction[] };
+  } = await graphQLClient.request(
+    ADDRESS_TRANSACTIONS_QUERY,
+    formatedVariables
+  );
 
-  return data?.storage.transactions
+  // Combine transactions from both networks
+  const allTransactions = [
+    ...(data?.storage?.transactions || []),
+    ...(data?.storage_sepolia?.transactions || []),
+  ];
+
+  return allTransactions.length
     ? groupBy(
-        data?.storage.transactions.map((transaction: Transaction) => {
+        allTransactions.map((transaction: Transaction) => {
           return {
             ...transaction,
             dataObject: JSON.parse(transaction.data),
           };
         }),
-        'channelId',
+        "channelId"
       )
     : [];
 };
