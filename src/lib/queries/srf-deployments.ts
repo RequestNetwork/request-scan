@@ -4,22 +4,6 @@ import type { SingleRequestProxyDeployment } from "../types";
 import { formatProxyDeploymentData } from "../utils";
 import { CORE_PROXY_DEPLOYMENT_FIELDS } from "./utils";
 
-const DEPLOYMENT_PARAMS_FRAGMENT = gql`
-  fragment DeploymentParams on SingleRequestProxyDeployment {
-    id
-    feeAddress
-    feeAmount
-    feeProxyUsed
-    payee
-    paymentReference
-    proxyAddress
-    proxyType
-    timestamp
-    tokenAddress
-    txHash
-  }
-`;
-
 export const PROXY_DEPLOYMENTS_QUERY = gql`
   ${CORE_PROXY_DEPLOYMENT_FIELDS}
   query ProxyDeploymentsQuery($first: Int!, $skip: Int!) {
@@ -150,7 +134,7 @@ export const fetchProxyDeployments = async (variables: {
     return formatProxyDeploymentData(data);
   } catch (error) {
     console.error("Error fetching proxy deployments:", error);
-    throw error;
+    return [];
   }
 };
 
