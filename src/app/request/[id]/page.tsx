@@ -36,6 +36,8 @@ import { JsonEditor } from "json-edit-react";
 import useExportPDF from "@/lib/hooks/use-export-pdf";
 import { useState } from "react";
 import { Channel } from "@/lib/types";
+import { fetchProxyDeploymentsByReference } from "@/lib/queries/srf-deployments";
+import { SRFInfoSection } from "@/components/srf-info-section";
 
 interface RequestPageProps {
   params: {
@@ -147,7 +149,15 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
       ...commonQueryOptions,
     });
 
-  if (isLoadingRequest || isLoadingRequestPayments) {
+  const { data: srfDeployments, isLoading: isLoadingSRF } = useQuery({
+    queryKey: ["srf-deployments", longPaymentReference],
+    queryFn: () =>
+      fetchProxyDeploymentsByReference({ reference: longPaymentReference }),
+    enabled: !!longPaymentReference,
+    ...commonQueryOptions,
+  });
+
+  if (isLoadingRequest || isLoadingRequestPayments || isLoadingSRF) {
     return <Skeleton className="h-[500px] w-full rounded-xl" />;
   }
 
@@ -355,7 +365,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
               </tbody>
             </table>
           </CardContent>
-          <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
+          <CardFooter className="flex flex-col border-t bg-muted/50 px-6 py-3 gap-6">
             <div className="grid grid-cols-1 gap-4 w-full">
               <div className="grid gap-3">
                 <div className="font-semibold">Actions & Payments</div>
@@ -367,6 +377,11 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 </div>
               </div>
             </div>
+            {srfDeployments && srfDeployments.length > 0 && (
+              <div className="w-full">
+                <SRFInfoSection deployments={srfDeployments} />
+              </div>
+            )}
           </CardFooter>
         </Card>
       </div>

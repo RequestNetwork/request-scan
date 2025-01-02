@@ -36,6 +36,21 @@ export interface Transaction {
   network?: "gnosis" | "sepolia";
 }
 
+export interface SingleRequestProxyDeployment {
+  id: string;
+  feeAddress: string;
+  feeAmount: string;
+  feeProxyUsed: boolean;
+  payee: string;
+  paymentReference: string;
+  proxyAddress: string;
+  proxyType: string;
+  timestamp: number;
+  tokenAddress: string;
+  txHash: string;
+  chain: string;
+}
+
 export interface Channel {
   id: string;
   topics: string[];

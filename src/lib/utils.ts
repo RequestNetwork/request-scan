@@ -1,20 +1,24 @@
 /** @format */
 
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import * as timeago from 'timeago.js';
-import en_short from 'timeago.js/lib/lang/en_short';
-import { formatUnits, isAddress, keccak256 } from 'viem';
-import { currencyManager } from './currency-manager';
-import { CHAINS } from './consts';
-import { Payment, Transaction } from './types';
-import { keepPreviousData } from '@tanstack/react-query';
-import { PaymentReferenceCalculator } from '@requestnetwork/request-client.js';
-import { RequestLogicTypes } from '@requestnetwork/types';
-import { ActorInfo, Invoice } from '@requestnetwork/data-format';
-import truncateEthAddress from 'truncate-eth-address';
+import type { ActorInfo, Invoice } from "@requestnetwork/data-format";
+import { PaymentReferenceCalculator } from "@requestnetwork/request-client.js";
+import type { RequestLogicTypes } from "@requestnetwork/types";
+import { keepPreviousData } from "@tanstack/react-query";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import * as timeago from "timeago.js";
+import en_short from "timeago.js/lib/lang/en_short";
+import truncateEthAddress from "truncate-eth-address";
+import { formatUnits, isAddress, keccak256 } from "viem";
+import { CHAINS } from "./consts";
+import { currencyManager } from "./currency-manager";
+import type {
+  Payment,
+  SingleRequestProxyDeployment,
+  Transaction,
+} from "./types";
 
-timeago.register('en_short', en_short);
+timeago.register("en_short", en_short);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -30,25 +34,25 @@ export const groupBy = (items: any, key: any) =>
   }, {});
 
 export const formatTimestamp = (timestamp: number) =>
-  `${new Date(timestamp * 1000).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    timeZone: 'UTC',
+  `${new Date(timestamp * 1000).toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: "UTC",
   })} UTC`;
 
 export const getAmountWithCurrencySymbol = (
   amount: bigint,
-  currency: string,
+  currency: string
 ) => {
   const currencyDetails: { symbol: string; decimals: number } | undefined =
     isAddress(currency)
       ? currencyManager.fromAddress(currency)
       : currencyManager.fromSymbol(currency);
 
-  return `${formatUnits(amount, currencyDetails?.decimals || 18)} ${currencyDetails?.symbol || ''}`;
+  return `${formatUnits(amount, currencyDetails?.decimals || 18)} ${currencyDetails?.symbol || ""}`;
 };
 
 /**
@@ -62,20 +66,31 @@ export const getAmountWithCurrencySymbol = (
 export function calculateShortPaymentReference(
   requestId: string,
   salt: string,
-  address: string,
+  address: string
 ): `0x${string}` | undefined {
   try {
     return `0x${PaymentReferenceCalculator.calculate(requestId, salt, address)}`;
   } catch (error) {
-    console.error('Error calculating short payment reference', error);
+    console.error("Error calculating short payment reference", error);
     return undefined;
   }
 }
 
 export const calculateLongPaymentReference = (
-  shortPaymentReference: `0x${string}`,
+  shortPaymentReference: `0x${string}`
 ) => {
   return keccak256(shortPaymentReference);
+};
+
+// Helper type for payment data structure
+type PaymentDataStructure = {
+  [K in `payment_${keyof typeof CHAINS}`]?: { payments: Payment[] };
+};
+
+type ProxyDeploymentDataStructure = {
+  [K in `payment_${keyof typeof CHAINS}`]?: {
+    singleRequestProxyDeployments: SingleRequestProxyDeployment[];
+  };
 };
 
 const mapPaymentToChain = (payment: Payment, chain: string) => ({
@@ -83,58 +98,49 @@ const mapPaymentToChain = (payment: Payment, chain: string) => ({
   chain,
 });
 
-export const formatPaymentData = (
-  data: {
-    [x: string]: { payments: Payment[] };
-  } | null,
-) => {
-  return data
-    ? [
-        ...data.payment_mainnet.payments.map((payment) =>
-          mapPaymentToChain(payment, CHAINS.MAINNET),
-        ),
-        ...data.payment_arbitrum_one.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.ARBITRUM_ONE),
-        ),
-        ...data.payment_avalanche.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.AVALANCHE),
-        ),
-        ...data.payment_base.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.BASE),
-        ),
-        ...data.payment_bsc.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.BSC),
-        ),
-        ...data.payment_celo.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.CELO),
-        ),
-        ...data.payment_fantom.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.FANTOM),
-        ),
-        ...data.payment_fuse.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.FUSE),
-        ),
+export const formatPaymentData = (data: PaymentDataStructure | null) => {
+  if (!data) return [];
 
-        ...data.payment_matic.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.MATIC),
-        ),
-        ...data.payment_moonbeam.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.MOONBEAM),
-        ),
-        ...data.payment_optimism.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.OPTIMISM),
-        ),
-        ...data.payment_sepolia.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.SEPOLIA),
-        ),
-        ...data.payment_xdai.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.XDAI),
-        ),
-        ...data.payment_zksyncera.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.ZKSYNCERA),
-        ),
-      ].sort((a: Payment, b: Payment) => b.timestamp - a.timestamp)
-    : [];
+  const chainEntries = Object.entries(data).filter(([key]) =>
+    key.startsWith("payment_")
+  );
+
+  return chainEntries
+    .flatMap(([key, value]) => {
+      const chainName = key
+        .replace("payment_", "")
+        .toUpperCase() as keyof typeof CHAINS;
+      return (
+        value?.payments.map((payment) =>
+          mapPaymentToChain(payment, CHAINS[chainName])
+        ) || []
+      );
+    })
+    .sort((a, b) => b.timestamp - a.timestamp);
+};
+
+export const formatProxyDeploymentData = (
+  data: ProxyDeploymentDataStructure | null
+) => {
+  if (!data) return [];
+
+  const chainEntries = Object.entries(data).filter(([key]) =>
+    key.startsWith("payment_")
+  );
+
+  return chainEntries
+    .flatMap(([key, value]) => {
+      const chainName = key
+        .replace("payment_", "")
+        .toUpperCase() as keyof typeof CHAINS;
+      return (
+        value?.singleRequestProxyDeployments.map((deployment) => ({
+          ...deployment,
+          chain: CHAINS[chainName],
+        })) || []
+      );
+    })
+    .sort((a, b) => b.timestamp - a.timestamp);
 };
 
 export const commonQueryOptions = {
@@ -144,25 +150,25 @@ export const commonQueryOptions = {
 };
 
 export const getTransactionCreateParameters = (
-  transaction: Transaction,
+  transaction: Transaction
 ): RequestLogicTypes.ICreateParameters => {
   return transaction?.dataObject?.data
     ?.parameters as RequestLogicTypes.ICreateParameters;
 };
 
 export const getContentDataFromCreateTransaction = (
-  createParameters: RequestLogicTypes.ICreateParameters,
+  createParameters: RequestLogicTypes.ICreateParameters
 ) => {
   const extensionData = createParameters.extensionsData;
   const contentData: Invoice = extensionData?.find(
-    (extension) => extension.id === 'content-data',
+    (extension) => extension.id === "content-data"
   )?.parameters?.content;
 
   return contentData;
 };
 
 export const getPaymentDataFromCreateTransaction = (
-  createParameters: RequestLogicTypes.ICreateParameters,
+  createParameters: RequestLogicTypes.ICreateParameters
 ) => {
   const extensionData = createParameters?.extensionsData!;
   return extensionData[0]?.parameters;
@@ -171,22 +177,25 @@ export const getPaymentDataFromCreateTransaction = (
 export const getBalance = (payments: Payment[] | undefined) => {
   return payments
     ? payments
-        .map((payment) => BigInt(payment?.amount || payment?.amountInCrypto || '0'))
+        .map((payment) =>
+          BigInt(payment?.amount || payment?.amountInCrypto || "0")
+        )
         .reduce((a, b) => a + b, BigInt(0))
     : BigInt(0);
 };
 
 export const renderAddress = (info: ActorInfo | undefined) => {
   const parts = [
-    info?.address?.['street-address'],
+    info?.address?.["street-address"],
     info?.address?.locality,
-    info?.address?.['postal-code'],
-    info?.address?.['country-name'],
+    info?.address?.["postal-code"],
+    info?.address?.["country-name"],
   ].filter(Boolean);
-  return parts.length > 0 ? parts.join(', ') : '-';
+  return parts.length > 0 ? parts.join(", ") : "-";
 };
 
 export const safeTruncateEthAddress = (address: string) =>
-  truncateEthAddress(address || '');
+  truncateEthAddress(address || "");
 
-export const capitalize = (str: string) => (str && str[0].toUpperCase() + str.slice(1)) || ""
+export const capitalize = (str: string) =>
+  (str && str[0].toUpperCase() + str.slice(1)) || "";
