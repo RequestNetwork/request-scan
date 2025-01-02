@@ -47,7 +47,10 @@ export function RecentSRFDeploymentsTable() {
           </CardDescription>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
-          <Link href="/single-request-forwarders">
+          <Link
+            href="/single-request-forwarders"
+            aria-label="View all Single Request Forwarder deployments"
+          >
             View All
             <ArrowUpRight className="h-4 w-4" />
           </Link>
@@ -78,6 +81,8 @@ export function RecentSRFDeploymentsTable() {
                       <Link
                         href={`${CHAIN_SCAN_URLS[deployment.chain]}/tx/${deployment.txHash}`}
                         target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`View transaction ${deployment.txHash} on ${deployment.chain}`}
                       >
                         {deployment.txHash.slice(0, 14)}...
                       </Link>

@@ -82,63 +82,65 @@ export const calculateLongPaymentReference = (
   return keccak256(shortPaymentReference);
 };
 
+// Helper type for payment data structure
+type PaymentDataStructure = {
+  [K in `payment_${keyof typeof CHAINS}`]?: { payments: Payment[] };
+};
+
+type ProxyDeploymentDataStructure = {
+  [K in `payment_${keyof typeof CHAINS}`]?: {
+    singleRequestProxyDeployments: SingleRequestProxyDeployment[];
+  };
+};
+
 const mapPaymentToChain = (payment: Payment, chain: string) => ({
   ...payment,
   chain,
 });
 
-export const formatPaymentData = (
-  data: {
-    [x: string]: { payments: Payment[] };
-  } | null
-) => {
-  return data
-    ? [
-        ...data.payment_mainnet.payments.map((payment) =>
-          mapPaymentToChain(payment, CHAINS.MAINNET)
-        ),
-        ...data.payment_arbitrum_one.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.ARBITRUM_ONE)
-        ),
-        ...data.payment_avalanche.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.AVALANCHE)
-        ),
-        ...data.payment_base.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.BASE)
-        ),
-        ...data.payment_bsc.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.BSC)
-        ),
-        ...data.payment_celo.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.CELO)
-        ),
-        ...data.payment_fantom.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.FANTOM)
-        ),
-        ...data.payment_fuse.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.FUSE)
-        ),
+export const formatPaymentData = (data: PaymentDataStructure | null) => {
+  if (!data) return [];
 
-        ...data.payment_matic.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.MATIC)
-        ),
-        ...data.payment_moonbeam.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.MOONBEAM)
-        ),
-        ...data.payment_optimism.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.OPTIMISM)
-        ),
-        ...data.payment_sepolia.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.SEPOLIA)
-        ),
-        ...data.payment_xdai.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.XDAI)
-        ),
-        ...data.payment_zksyncera.payments.map((payment: any) =>
-          mapPaymentToChain(payment, CHAINS.ZKSYNCERA)
-        ),
-      ].sort((a: Payment, b: Payment) => b.timestamp - a.timestamp)
-    : [];
+  const chainEntries = Object.entries(data).filter(([key]) =>
+    key.startsWith("payment_")
+  );
+
+  return chainEntries
+    .flatMap(([key, value]) => {
+      const chainName = key
+        .replace("payment_", "")
+        .toUpperCase() as keyof typeof CHAINS;
+      return (
+        value?.payments.map((payment) =>
+          mapPaymentToChain(payment, CHAINS[chainName])
+        ) || []
+      );
+    })
+    .sort((a, b) => b.timestamp - a.timestamp);
+};
+
+export const formatProxyDeploymentData = (
+  data: ProxyDeploymentDataStructure | null
+) => {
+  if (!data) return [];
+
+  const chainEntries = Object.entries(data).filter(([key]) =>
+    key.startsWith("payment_")
+  );
+
+  return chainEntries
+    .flatMap(([key, value]) => {
+      const chainName = key
+        .replace("payment_", "")
+        .toUpperCase() as keyof typeof CHAINS;
+      return (
+        value?.singleRequestProxyDeployments.map((deployment) => ({
+          ...deployment,
+          chain: CHAINS[chainName],
+        })) || []
+      );
+    })
+    .sort((a, b) => b.timestamp - a.timestamp);
 };
 
 export const commonQueryOptions = {
@@ -197,33 +199,3 @@ export const safeTruncateEthAddress = (address: string) =>
 
 export const capitalize = (str: string) =>
   (str && str[0].toUpperCase() + str.slice(1)) || "";
-
-export const formatProxyDeploymentData = (
-  data: {
-    [x: string]: {
-      singleRequestProxyDeployments: SingleRequestProxyDeployment[];
-    };
-  } | null
-) => {
-  if (!data) return [];
-
-  console.log("Data received in formatter:", data); // Debug log
-
-  const deployments: SingleRequestProxyDeployment[] = [];
-  Object.keys(data).forEach((key) => {
-    if (data[key]?.singleRequestProxyDeployments?.length > 0) {
-      const networkName = key.replace("payment_", "");
-      const networkDeployments = data[key].singleRequestProxyDeployments.map(
-        (deployment) => ({
-          ...deployment,
-          chain: networkName,
-        })
-      );
-      deployments.push(...networkDeployments);
-    }
-  });
-
-  console.log("Deployments after formatting:", deployments); // Debug log
-
-  return deployments.sort((a, b) => b.timestamp - a.timestamp);
-};
