@@ -102,7 +102,9 @@ export const columns: ColumnDef<SingleRequestProxyDeployment>[] = [
   {
     accessorKey: "chain",
     header: "Network",
-    cell: ({ row }) => row.getValue("chain"),
+    cell: ({ row }) => (
+      <div className="hidden 2xl:inline-block">{row.getValue("chain")}</div>
+    ),
   },
   {
     accessorKey: "timestamp",

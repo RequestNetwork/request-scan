@@ -132,3 +132,75 @@ export const fetchProxyDeployments = async (variables: {
 
   return formatProxyDeploymentData(data);
 };
+
+export const PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY = gql`
+  ${CORE_PROXY_DEPLOYMENT_FIELDS}
+  query ProxyDeploymentsByReferenceQuery($reference: Bytes!) {
+    payment_mainnet {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_arbitrum_one {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_avalanche {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_base {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_bsc {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_celo {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_matic {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_optimism {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_sepolia {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_xdai {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+    payment_zksyncera {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
+  }
+`;
+
+export const fetchProxyDeploymentsByReference = async (variables: {
+  reference: string;
+}): Promise<SingleRequestProxyDeployment[]> => {
+  const data = await graphQLClient.request(
+    PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY,
+    variables
+  );
+
+  return formatProxyDeploymentData(data);
+};
