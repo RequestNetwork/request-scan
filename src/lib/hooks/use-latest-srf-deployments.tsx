@@ -7,11 +7,12 @@ import { fetchProxyDeployments } from "../queries/srf-deployments";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { commonQueryOptions } from "../utils";
 
-interface ILatestSRFDeployments {
+interface LatestSRFDeployments {
   deployments: SingleRequestProxyDeployment[];
   isLoading: boolean;
   status: string;
   isFetching: boolean;
+  error: Error | null;
 }
 
 type Props = {
@@ -38,7 +39,7 @@ export const useLatestSRFDeployments = ({
     SingleRequestProxyDeployment[] | null
   >();
 
-  const { status, isLoading, data, isFetching } = useQuery({
+  const { status, isLoading, data, isFetching, error } = useQuery({
     queryKey: ["srf-deployments", first, skip],
     queryFn: () => fetchProxyDeployments({ first, skip }),
     refetchInterval: pollInterval === 0 ? false : pollInterval,
@@ -67,9 +68,10 @@ export const useLatestSRFDeployments = ({
       isLoading,
       status,
       isFetching,
+      error,
     }),
-    [data, isLoading, status, isFetching]
+    [data, isLoading, status, isFetching, error]
   );
 
-  return value as ILatestSRFDeployments;
+  return value as LatestSRFDeployments;
 };
