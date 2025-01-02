@@ -218,10 +218,15 @@ export const PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY = gql`
 export const fetchProxyDeploymentsByReference = async (variables: {
   reference: string;
 }): Promise<SingleRequestProxyDeployment[]> => {
-  const data = await graphQLClient.request(
-    PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY,
-    variables
-  );
+  try {
+    const data = await graphQLClient.request(
+      PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY,
+      variables
+    );
 
-  return formatProxyDeploymentData(data);
+    return formatProxyDeploymentData(data);
+  } catch (err) {
+    console.error("Error fetching proxy deployments by reference", err);
+    return [];
+  }
 };

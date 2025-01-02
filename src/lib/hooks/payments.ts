@@ -157,8 +157,13 @@ export const fetchPayments = async (variables: {
   first: number;
   skip: number;
 }): Promise<Payment[]> => {
-  const data: { [x: string]: { payments: Payment[] } } =
-    await graphQLClient.request(PAYMENTS_QUERY, variables);
+  try {
+    const data: { [x: string]: { payments: Payment[] } } =
+      await graphQLClient.request(PAYMENTS_QUERY, variables);
 
-  return formatPaymentData(data);
+    return formatPaymentData(data);
+  } catch (err) {
+    console.error("Error fetching payments", err);
+    return [];
+  }
 };
