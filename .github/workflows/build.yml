@@ -1,0 +1,45 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - "**/*.{js,jsx,ts,tsx}"
+      - "package*.json"
+      - ".github/workflows/build.yml"
+      - "nixpacks.toml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18
+      options: --memory=4g
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --omit=optional
+
+      - name: Build
+        run: |
+          ulimit -S -c unlimited
+          npm run build
+        env:
+          NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
+          NODE_OPTIONS: "--max_old_space_size=4096 --no-warnings"
+          NEXT_TELEMETRY_DISABLED: "1"
+          NPM_CONFIG_PRODUCTION: "false"
+          NODE_ENV: "production"
