@@ -203,7 +203,11 @@ export const fetchProxyDeploymentsByReference = async (variables: {
   reference: string;
 }): Promise<SingleRequestProxyDeployment[]> => {
   try {
-    const data = await graphQLClient.request(
+    const data: {
+      [x: string]: {
+        singleRequestProxyDeployments: SingleRequestProxyDeployment[];
+      };
+    } = await graphQLClient.request(
       PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY,
       variables
     );
