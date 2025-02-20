@@ -1,227 +1,321 @@
 /** @format */
-'use client';
+"use client";
 
-import { Invoice, InvoiceItem } from '@requestnetwork/data-format';
-import { formatUnits, isAddress } from 'viem';
-import { currencyManager } from '../currency-manager';
-import { capitalize, renderAddress } from '../utils';
-import { PaymentData } from '../types'
+import { Invoice, InvoiceItem } from "@requestnetwork/data-format";
+import { formatUnits, isAddress } from "viem";
+import { currencyManager } from "../currency-manager";
+import { capitalize, renderAddress } from "../utils";
+import { PaymentData } from "../types";
+// @ts-expect-error: No html2pdf does not have the @types to install
+import html2pdf from "html2pdf.js";
 
-declare global {
-  interface Window {
-    html2pdf: any;
-  }
-}
 const RENDER_DELAY_MS = 3000; // Define this at the top of the file or in a config
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function useExportPDF() {
-  const loadScript = (src: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-      document.head.appendChild(script);
-    });
-  };
+	// Add timeout handling
+	const TIMEOUT_MS = 10000;
+	const MAX_RETRIES = 3;
 
-  const ensureHtml2PdfLoaded = async () => {
-    if (typeof window.html2pdf === 'undefined') {
-      await loadScript(
-        'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
-      );
-    }
-  };
+	const formatDate = (date: string | undefined) => {
+		return date ? new Date(date).toLocaleDateString() : "-";
+	};
 
-  const formatDate = (date: string | undefined) => {
-    return date ? new Date(date).toLocaleDateString() : '-';
-  };
+	const getCurrencyDetails = (currency: any) => {
+		const currencyDetails: { symbol: string; decimals: number } | undefined =
+			isAddress(currency)
+				? currencyManager.fromAddress(currency)
+				: currencyManager.fromSymbol(currency);
 
-  const getCurrencyDetails = (currency: any) => {
-    const currencyDetails: { symbol: string; decimals: number } | undefined =
-      isAddress(currency)
-        ? currencyManager.fromAddress(currency)
-        : currencyManager.fromSymbol(currency);
+		return currencyDetails;
+	};
 
-    return currencyDetails;
-  };
+	const calculateItemTotal = (item: InvoiceItem): bigint => {
+		try {
+			const unitPrice = BigInt(Math.floor(Number(item.unitPrice || 0)));
+			const discount = BigInt(Math.floor(Number(item.discount || 0)));
+			const taxPercentage = Number(item.tax?.amount || 0);
+			const quantity = BigInt(Math.floor(Number(item.quantity || 1)));
 
-  const calculateItemTotal = (item: InvoiceItem): number => {
-    const { discount = 0, unitPrice = 0, tax = { amount: 0 } } = item;
-    const discountAmount = Number(discount);
-    const priceAfterDiscount = Number(unitPrice) - discountAmount;
-    const taxAmount = priceAfterDiscount * (Number(tax.amount) / 100);
-    const itemTotal = (priceAfterDiscount + taxAmount) * item.quantity;
-    return itemTotal;
-  };
+			const priceAfterDiscount = unitPrice - discount;
+			const taxAmount =
+				(priceAfterDiscount * BigInt(Math.floor(taxPercentage * 100))) /
+				BigInt(10000);
+			const itemTotal = (priceAfterDiscount + taxAmount) * quantity;
 
-  const exportPDF = async (
-    invoice: Invoice & {
-      currency: any;
-      currencyInfo: any;
-      payer: any;
-      payee: any;
-      expectedAmount: any;
-      paymentData: PaymentData;
-    },
-  ) => {
-    await ensureHtml2PdfLoaded();
+			return itemTotal;
+		} catch (error) {
+			console.error("Error calculating item total:", error);
+			return BigInt(0);
+		}
+	};
 
-    const currencyDetails = getCurrencyDetails(invoice.currencyInfo?.value);
-    const paymentCurrencyDetails = getCurrencyDetails(
-      invoice.paymentData?.acceptedTokens?.length > 0
-        ? invoice.paymentData.acceptedTokens[0]
-        : undefined
-    );
+	const formatBigIntAmount = (
+		amount: string | number | undefined,
+		decimals: number,
+	): string => {
+		try {
+			if (!amount) return "0";
+			const value = Math.floor(Number(amount));
+			return formatUnits(BigInt(value), decimals || 0);
+		} catch (error) {
+			console.error("Error formatting amount:", error);
+			return "0";
+		}
+	};
 
-    const content = `
+	const exportPDF = async (
+		invoice: Invoice & {
+			currency: any;
+			currencyInfo: any;
+			payer: any;
+			payee: any;
+			expectedAmount: any;
+			paymentData: PaymentData;
+		},
+	) => {
+		let retries = 0;
+
+		const generatePDF = async () => {
+			try {
+				const currencyDetails = getCurrencyDetails(invoice.currencyInfo?.value);
+				const paymentCurrencyDetails = getCurrencyDetails(
+					invoice.paymentData?.acceptedTokens?.length > 0
+						? invoice.paymentData.acceptedTokens[0]
+						: undefined,
+				);
+
+				// Sanitize invoice number for filename
+				const safeInvoiceNumber = (invoice?.invoiceNumber || "unknown")
+					.replace(/[^a-z0-9]/gi, "-")
+					.toLowerCase();
+
+				const content = `
     <html>
     <head>
+      <meta charset="UTF-8">
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+        #pdf-container {
+          font-family: 'Urbanist', sans-serif;
+          font-size: 10px;
+        }
+        #pdf-container table {
+          table-layout: fixed;
+          width: 100%;
+          border-collapse: collapse;
+        }
+        #pdf-container td, #pdf-container th {
+          word-wrap: break-word;
+          border: 1px solid #ddd;
+          padding: 4px;
+        }
+        #pdf-container th {
+          background-color: #f2f2f2;
+          text-align: left;
+        }
+      </style>
     </head>
     <body>
-    <div id="invoice" style="max-width: 800px; margin: 0 auto; padding: 5px;">
+    <div id="pdf-container" style="max-width: 680px; margin: 0 auto; padding: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: start;">
+        <img src="${window.location.origin}/logo-1.png" 
+             alt="Logo" 
+             style="width: 50px; height: 50px; object-fit: contain; margin-bottom: 20px;">
         <div style="text-align: right;">
           <p>Issued on ${formatDate(invoice?.creationDate)}</p>
           <p>Payment due by ${formatDate(invoice?.paymentTerms?.dueDate)}</p>
         </div>
       </div>
 
-      <h1 style="text-align: center; color: #333; font-size: 28px; font-weight: bold; margin-bottom: 14px;">INVOICE #${
-        invoice?.invoiceNumber || '-'
-      }</h1>
+      <h1 style="text-align: center; color: #333; font-size: 24px; font-weight: bold; margin-bottom: 14px;">INVOICE #${
+				invoice?.invoiceNumber || "-"
+			}</h1>
 
-      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background-color: #FBFBFB; padding: 5px; gap:2%;">
-        <div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background-color: #FBFBFB; padding: 10px;">
+        <div style="width: 48%;">
           <strong>From:</strong><br>
-          <p style="font-size: 12px">${invoice.payee?.value || '-'}</p>
-          ${invoice?.sellerInfo?.firstName || ''} ${invoice?.sellerInfo?.lastName || ''}<br>
-          ${renderAddress(invoice?.sellerInfo)}<br>
-          ${invoice?.sellerInfo?.taxRegistration ? `VAT: ${invoice.sellerInfo.taxRegistration}` : ''}
+          <p style="font-size: 10px; margin: 3px 0; word-break: break-all;">${
+						invoice.payee?.value || "-"
+					}</p>
+          <p style="font-size: 10px; margin: 3px 0;">${
+						invoice?.sellerInfo?.firstName || ""
+					} ${invoice?.sellerInfo?.lastName || ""}</p>
+          <p style="font-size: 10px; margin: 3px 0;">${renderAddress(
+						invoice?.sellerInfo,
+					)}</p>
+          ${
+						invoice?.sellerInfo?.taxRegistration
+							? `<p style="font-size: 10px; margin: 3px 0;">VAT: ${invoice.sellerInfo.taxRegistration}</p>`
+							: ""
+					}
         </div>
 
-        <div>
+        <div style="width: 48%;">
           <strong>To:</strong><br>
-          <p style="font-size: 12px">${invoice.payer?.value || '-'}</p>
-          ${invoice?.buyerInfo?.firstName || ''} ${invoice?.buyerInfo?.lastName || ''}<br>
-          ${renderAddress(invoice?.buyerInfo)}<br>
-          ${invoice?.buyerInfo?.taxRegistration ? `VAT: ${invoice.buyerInfo.taxRegistration}` : ''}
+          <p style="font-size: 10px; margin: 3px 0; word-break: break-all;">${
+						invoice.payer?.value || "-"
+					}</p>
+          <p style="font-size: 10px; margin: 3px 0;">${
+						invoice?.buyerInfo?.firstName || ""
+					} ${invoice?.buyerInfo?.lastName || ""}</p>
+          <p style="font-size: 10px; margin: 3px 0;">${renderAddress(
+						invoice?.buyerInfo,
+					)}</p>
+          ${
+						invoice?.buyerInfo?.taxRegistration
+							? `<p style="font-size: 10px; margin: 3px 0;">VAT: ${invoice.buyerInfo.taxRegistration}</p>`
+							: ""
+					}
         </div>
       </div>
-      
-      <div style="margin-bottom: 20px;">
-        <strong>Payment Chain:</strong> ${invoice?.paymentData?.network ? capitalize(invoice?.paymentData?.network) : '-'}<br>
-        <strong>Invoice Currency:</strong> ${currencyDetails?.symbol || '-'}<br>
-        <strong>Settlement Currency:</strong> ${paymentCurrencyDetails?.symbol || "-"}<br>
-        <strong>Invoice Type:</strong> Regular Invoice
+
+      <div style="margin-bottom: 20px; font-size: 10px;">
+        <strong>Payment Chain:</strong> ${
+					invoice?.paymentData?.network
+						? capitalize(invoice?.paymentData?.network)
+						: "-"
+				}<br>
+        <strong>Invoice Currency:</strong> ${currencyDetails?.symbol || "-"}<br>
+        <strong>Settlement Currency:</strong> ${
+					paymentCurrencyDetails?.symbol || "-"
+				}<br>
       </div>
-      
-      <table style="width: 100%; border-collapse: collapse;">
+
+      <table>
         <thead>
-          <tr style="background-color: #f2f2f2;">
-            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Description</th>
-            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Quantity</th>
-            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Unit Price</th>
-            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Discount</th>
-            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Tax</th>
-            <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Amount</th>
+          <tr>
+            <th style="width: 25%;">Description</th>
+            <th style="width: 10%; text-align: right;">Quantity</th>
+            <th style="width: 20%; text-align: right;">Unit Price</th>
+            <th style="width: 15%; text-align: right;">Discount</th>
+            <th style="width: 10%; text-align: right;">Tax</th>
+            <th style="width: 20%; text-align: right;">Amount</th>
           </tr>
         </thead>
         <tbody>
           ${(invoice?.invoiceItems || [])
-            .map(
-              (item: any) => `
+						.map(
+							(item: any) => `
             <tr>
-              <td style="border: 1px solid #ddd; padding: 8px;">${item.name || '-'}</td>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${item.quantity || '-'}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">${
+								item.name || "-"
+							}</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${
-                item.unitPrice
-                  ? formatUnits(
-                      BigInt(item.unitPrice),
-                      currencyDetails?.decimals || 0,
-                    )
-                  : '-'
-              }</td>
+								item.quantity || "-"
+							}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${formatBigIntAmount(
+								item.unitPrice,
+								currencyDetails?.decimals || 0,
+							)}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${formatBigIntAmount(
+								item.discount,
+								currencyDetails?.decimals || 0,
+							)}</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${
-                item.discount
-                  ? formatUnits(
-                      BigInt(item.discount),
-                      currencyDetails?.decimals || 0,
-                    )
-                  : '-'
-              }</td>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${
-                item.tax?.amount ? `${item.tax.amount}%` : '-'
-              }</td>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${
-                item
-                  ? formatUnits(
-                      BigInt(calculateItemTotal(item)),
-                      currencyDetails?.decimals || 0,
-                    )
-                  : '-'
-              }</td>
+								item.tax?.amount ? `${item.tax.amount}%` : "-"
+							}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${formatBigIntAmount(
+								calculateItemTotal(item).toString(),
+								currencyDetails?.decimals || 0,
+							)}</td>
             </tr>
           `,
-            )
-            .join('')}
+						)
+						.join("")}
         </tbody>
         <tfoot>
           <tr>
             <td colspan="5" style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>Due:</strong></td>
             <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>${
-              invoice.expectedAmount
-                ? `${formatUnits(BigInt(invoice.expectedAmount), currencyDetails?.decimals || 0)} ${currencyDetails?.symbol || ''}`
-                : '-'
-            }</strong></td>
+							invoice.expectedAmount
+								? `${formatUnits(
+										BigInt(invoice.expectedAmount),
+										currencyDetails?.decimals || 0,
+								  )} ${currencyDetails?.symbol || ""}`
+								: "-"
+						}</strong></td>
           </tr>
         </tfoot>
       </table>
       
       ${
-        invoice?.note
-          ? `<div style="margin-top: 20px;">
+				invoice?.note
+					? `<div style="margin-top: 20px; font-size: 10px;">
         <h3>Note:</h3>
         <p>${invoice.note}</p>
       </div>`
-          : ''
-      }
+					: ""
+			}
     </div>
     </body>
     </html>
   `;
 
-    const opt = {
-      margin: 10,
-      filename: `invoice-${invoice.invoiceNumber || 'unknown'}.pdf`,
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        letterRendering: true,
-      },
-      jsPDF: {
-        unit: 'mm',
-        format: 'a4',
-        orientation: 'portrait',
-        compress: true,
-      },
-    };
+				const opt = {
+					margin: 10,
+					filename: `invoice-${safeInvoiceNumber}.pdf`,
+					html2canvas: {
+						scale: 2,
+						useCORS: true,
+						letterRendering: true,
+						logging: false, // Disable logging
+						timeout: TIMEOUT_MS,
+					},
+					jsPDF: {
+						unit: "mm",
+						format: "a4",
+						orientation: "portrait",
+						compress: true,
+					},
+				};
 
-    const element = document.createElement('div');
-    element.innerHTML = content;
-    document.body.appendChild(element);
+				// Create container outside the viewport
+				const container = document.createElement("div");
+				container.style.position = "absolute";
+				container.style.left = "-9999px";
+				container.style.top = "-9999px";
+				document.body.appendChild(container);
 
-    // add a delay to ensure the content is rendered before exporting
-    await sleep(RENDER_DELAY_MS);
+				try {
+					const element = document.createElement("div");
+					element.innerHTML = content;
+					container.appendChild(element);
 
-    await window.html2pdf().from(element).set(opt).save();
+					await sleep(RENDER_DELAY_MS);
+					await Promise.race([
+						html2pdf().from(element).set(opt).save(),
+						new Promise((_, reject) =>
+							setTimeout(
+								() => reject(new Error("PDF generation timeout")),
+								TIMEOUT_MS,
+							),
+						),
+					]);
+				} finally {
+					// Ensure cleanup happens even if there's an error
+					if (document.body.contains(container)) {
+						document.body.removeChild(container);
+					}
+				}
+			} catch (error) {
+				if (retries < MAX_RETRIES) {
+					retries++;
+					console.warn(
+						`PDF generation failed, attempt ${retries} of ${MAX_RETRIES}`,
+					);
+					await sleep(1000); // Wait before retrying
+					return generatePDF();
+				}
+				throw error;
+			}
+		};
 
-    document.body.removeChild(element);
-  };
+		await generatePDF();
+	};
 
-  return {
-    exportPDF,
-  };
+	return {
+		exportPDF,
+	};
 }
