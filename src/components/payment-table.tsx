@@ -99,7 +99,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: 'Amount',
     cell: ({ row }) =>
       getAmountWithCurrencySymbol(
-        row.getValue('amountInCrypto'),
+        row.getValue('amountInCrypto') || row.getValue('amount'),
         row.original?.tokenAddress,
       ),
   },
