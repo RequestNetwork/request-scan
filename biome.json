@@ -41,10 +41,5 @@
         "noUnusedVariables": "error"
       }
     }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
-    }
   }
 }
