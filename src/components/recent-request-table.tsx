@@ -1,15 +1,14 @@
 /** @format */
-'use client';
+"use client";
 
-import { ArrowUpRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -17,12 +16,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import Link from 'next/link';
-import { formatTimestamp } from '@/lib/utils';
-import TimeAgo from 'timeago-react';
-import { useLatestRequests } from '@/lib/hooks/use-latest-requests';
-import { Skeleton } from './ui/skeleton';
+} from "@/components/ui/table";
+import { useLatestRequests } from "@/lib/hooks/use-latest-requests";
+import { formatTimestamp } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import TimeAgo from "timeago-react";
+import { Skeleton } from "./ui/skeleton";
 
 export function RecentRequestTable() {
   const { requests, isLoading } = useLatestRequests({
@@ -73,7 +73,7 @@ export function RecentRequestTable() {
                   <TimeAgo
                     datetime={requests[channelId][0].blockTimestamp * 1000}
                     locale="en_short"
-                  />{' '}
+                  />{" "}
                   <span className="hidden 2xl:inline-block">
                     ({formatTimestamp(requests[channelId][0].blockTimestamp)})
                   </span>

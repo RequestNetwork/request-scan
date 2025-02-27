@@ -7,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import Link from 'next/link';
+} from "@/components/ui/card";
+import Link from "next/link";
 
 export default function NotFoundPage() {
   return (

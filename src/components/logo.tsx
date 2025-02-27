@@ -1,18 +1,18 @@
 /** @format */
 
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+import type React from "react";
 
 export function Logo({
   className,
-  color = 'black',
+  color = "black",
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   return (
     <Link href="/" {...props} className={cn(className)}>
-      {color === 'black' ? (
+      {color === "black" ? (
         <Image
           src="/logo-2.svg"
           alt="Logo"

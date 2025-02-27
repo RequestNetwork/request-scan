@@ -1,18 +1,22 @@
 /** @format */
 "use client";
 
+import { SRFInfoSection } from "@/components/srf-info-section";
 import { TransactionsAndPaymentsTable } from "@/components/transactions-and-payments-table";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import useExportPDF from "@/lib/hooks/use-export-pdf";
 import { fetchRequest } from "@/lib/queries/channel";
 import { fetchRequestPayments } from "@/lib/queries/request-payments";
+import { fetchProxyDeploymentsByReference } from "@/lib/queries/srf-deployments";
+import type { Channel } from "@/lib/types";
 import {
   calculateLongPaymentReference,
   calculateShortPaymentReference,
@@ -26,18 +30,14 @@ import {
   getTransactionCreateParameters,
   renderAddress,
 } from "@/lib/utils";
-import { ActorInfo } from "@requestnetwork/data-format";
+import type { ActorInfo } from "@requestnetwork/data-format";
 import { useQuery } from "@tanstack/react-query";
+import { JsonEditor } from "json-edit-react";
 import { Copy, File, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import TimeAgo from "timeago-react";
-import { JsonEditor } from "json-edit-react";
-import useExportPDF from "@/lib/hooks/use-export-pdf";
 import { useState } from "react";
-import { Channel } from "@/lib/types";
-import { fetchProxyDeploymentsByReference } from "@/lib/queries/srf-deployments";
-import { SRFInfoSection } from "@/components/srf-info-section";
+import TimeAgo from "timeago-react";
 
 interface RequestPageProps {
   params: {
@@ -56,7 +56,7 @@ const ActorInfoSection = ({ actorInfo }: { actorInfo?: ActorInfo }) => {
   if (
     !actorInfo ||
     Object.keys(actorInfo).every(
-      (k) => !Object.keys((actorInfo as any)[k]).length
+      (k) => !Object.keys((actorInfo as any)[k]).length,
     )
   ) {
     return "N/A";
@@ -134,7 +134,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
         request?.transactions[0].dataObject.data.parameters.extensionsData[0]
           .parameters.salt || "",
         request?.transactions[0].dataObject.data.parameters.extensionsData[0]
-          .parameters.paymentAddress || ""
+          .parameters.paymentAddress || "",
       )
     : "";
 
@@ -299,7 +299,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="pl-16">
                     {getAmountWithCurrencySymbol(
                       BigInt(createParameters.expectedAmount),
-                      createParameters.currency.value
+                      createParameters.currency.value,
                     )}
                   </td>
                 </tr>
@@ -308,7 +308,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="pl-16">
                     {getAmountWithCurrencySymbol(
                       BigInt(balance),
-                      balanceCurrency || ""
+                      balanceCurrency || "",
                     )}
                   </td>
                 </tr>

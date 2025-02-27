@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import packageInfo from "../../../package.json";
 import Link from "next/link";
+import packageInfo from "../../../package.json";
 
 interface VersionDisplayProps {
   githubRelease: string;

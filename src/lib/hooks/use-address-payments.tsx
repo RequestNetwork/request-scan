@@ -1,9 +1,9 @@
 /** @format */
 
-import { useQuery } from '@tanstack/react-query';
-import { PaginationState } from '@tanstack/react-table';
-import { fetchAddressPayments } from '../queries/address-payments';
-import { commonQueryOptions } from '../utils';
+import { useQuery } from "@tanstack/react-query";
+import type { PaginationState } from "@tanstack/react-table";
+import { fetchAddressPayments } from "../queries/address-payments";
+import { commonQueryOptions } from "../utils";
 
 export function useAddressPayments(
   address: string,
@@ -11,7 +11,7 @@ export function useAddressPayments(
 ) {
   return useQuery({
     queryKey: [
-      'address-payments',
+      "address-payments",
       address,
       pagination.pageSize,
       pagination.pageIndex * pagination.pageSize,

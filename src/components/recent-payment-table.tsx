@@ -1,15 +1,14 @@
 /** @format */
-'use client';
+"use client";
 
-import { ArrowUpRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -17,14 +16,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import Link from 'next/link';
-import { formatTimestamp } from '@/lib/utils';
-import TimeAgo from 'timeago-react';
-import { CHAIN_SCAN_URLS } from '@/lib/consts';
-import { Payment } from '@/lib/types';
-import { useLatestPayments } from '@/lib/hooks/use-latest-payments';
-import { Skeleton } from './ui/skeleton';
+} from "@/components/ui/table";
+import { CHAIN_SCAN_URLS } from "@/lib/consts";
+import { useLatestPayments } from "@/lib/hooks/use-latest-payments";
+import type { Payment } from "@/lib/types";
+import { formatTimestamp } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import TimeAgo from "timeago-react";
+import { Skeleton } from "./ui/skeleton";
 
 export function RecentPaymentTable() {
   const { payments, isLoading } = useLatestPayments({
@@ -89,7 +89,7 @@ export function RecentPaymentTable() {
                     <TimeAgo
                       datetime={payment.timestamp * 1000}
                       locale="en_short"
-                    />{' '}
+                    />{" "}
                     <span className="hidden 2xl:inline-block">
                       ({formatTimestamp(payment.timestamp)})
                     </span>

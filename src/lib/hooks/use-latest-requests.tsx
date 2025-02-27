@@ -1,12 +1,12 @@
 /** @format */
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { Transaction } from '../types';
-import { useQuery } from '@tanstack/react-query';
-import { fetchRequests } from '../queries/transactions';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { commonQueryOptions } from '../utils';
+import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { fetchRequests } from "../queries/transactions";
+import type { Transaction } from "../types";
+import { commonQueryOptions } from "../utils";
 
 interface ILatestRequests {
   requests: {
@@ -43,7 +43,7 @@ export const useLatestRequests = ({
   }>();
 
   const { status, isLoading, data, isFetching } = useQuery({
-    queryKey: ['requests', first, skip],
+    queryKey: ["requests", first, skip],
     queryFn: () => fetchRequests({ first, skip }),
     refetchInterval: pollInterval === 0 ? false : pollInterval,
     placeholderData: commonQueryOptions.placeholderData,
@@ -57,7 +57,7 @@ export const useLatestRequests = ({
     }
     const params = new URLSearchParams(searchParams);
 
-    params.set('page', page.toString());
+    params.set("page", page.toString());
     replace(`${pathname}?${params.toString()}`);
 
     (async () => {

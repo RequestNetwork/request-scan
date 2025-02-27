@@ -2,7 +2,7 @@
 
 import { gql } from "graphql-request";
 import { graphQLClient } from "../graphQlClient";
-import { Transaction } from "../types";
+import type { Transaction } from "../types";
 import { groupBy } from "../utils";
 
 export const TRANSACTIONS_QUERY = gql`
@@ -74,7 +74,7 @@ export const fetchRequests = async (variables: {
             dataObject: JSON.parse(transaction.data),
           };
         }),
-        "channelId"
+        "channelId",
       )
     : [];
 };

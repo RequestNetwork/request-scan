@@ -7,17 +7,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { CHAIN_SCAN_URLS } from '@/lib/consts';
-import { Payment, Transaction } from '@/lib/types';
+} from "@/components/ui/table";
+import { CHAIN_SCAN_URLS } from "@/lib/consts";
+import type { Payment, Transaction } from "@/lib/types";
 import {
   formatTimestamp,
   getAmountWithCurrencySymbol,
   safeTruncateEthAddress,
-} from '@/lib/utils';
-import Link from 'next/link';
-import TimeAgo from 'timeago-react';
-import { formatUnits } from 'viem';
+} from "@/lib/utils";
+import Link from "next/link";
+import TimeAgo from "timeago-react";
+import { formatUnits } from "viem";
 
 interface Props {
   transactions: Transaction[];
@@ -58,13 +58,13 @@ export function TransactionsAndPaymentsTable({
         {allData.map((item) => (
           <TableRow key={item.id}>
             <TableCell className="font-medium">
-              {'dataObject' in item ? 'action' : 'payment'}
+              {"dataObject" in item ? "action" : "payment"}
             </TableCell>
             <TableCell className="font-medium">
-              {'dataObject' in item ? item?.dataObject?.data?.name : ''}
+              {"dataObject" in item ? item?.dataObject?.data?.name : ""}
             </TableCell>
             <TableCell>
-              {'chain' in item ? (
+              {"chain" in item ? (
                 <div className="font-medium text-emerald-700">
                   <Link
                     href={`${CHAIN_SCAN_URLS[item.chain]}/tx/${item.txHash}`}
@@ -82,48 +82,48 @@ export function TransactionsAndPaymentsTable({
               {formatTimestamp(item.timestamp)})
             </TableCell>
             <TableCell className="font-medium">
-              {'from' in item ? (
+              {"from" in item ? (
                 <div className="font-medium text-emerald-700">
                   <Link href={`/address/${item.from}`}>
-                    {safeTruncateEthAddress(item.from)}{' '}
+                    {safeTruncateEthAddress(item.from)}{" "}
                   </Link>
                 </div>
               ) : (
-                ''
+                ""
               )}
             </TableCell>
             <TableCell className="font-medium">
-              {'to' in item ? (
+              {"to" in item ? (
                 <div className="font-medium text-emerald-700">
                   <Link href={`/address/${item.to}`}>
-                    {safeTruncateEthAddress(item.to)}{' '}
+                    {safeTruncateEthAddress(item.to)}{" "}
                   </Link>
                 </div>
               ) : (
-                ''
+                ""
               )}
             </TableCell>
             <TableCell className="font-medium">
-              {'dataObject' in item
+              {"dataObject" in item
                 ? getAmountWithCurrencySymbol(
                     item?.dataObject?.data?.parameters?.expectedAmount || 0,
                     item?.dataObject?.data?.parameters?.currency?.value,
                   )
                 : getAmountWithCurrencySymbol(
-                    BigInt(item?.amountInCrypto || item?.amount || '0'),
+                    BigInt(item?.amountInCrypto || item?.amount || "0"),
                     item?.tokenAddress,
                   )}
             </TableCell>
             <TableCell className="font-medium">
-              {'gasUsed' in item
+              {"gasUsed" in item
                 ? formatUnits(
                     BigInt(Number(item?.gasUsed) * Number(item?.gasPrice)),
                     18,
                   )
-                : ''}
+                : ""}
             </TableCell>
             <TableCell className="font-medium text-right">
-              {'feeAmount' in item ? item.feeAmount : ''}
+              {"feeAmount" in item ? item.feeAmount : ""}
             </TableCell>
           </TableRow>
         ))}

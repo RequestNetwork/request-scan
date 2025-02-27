@@ -1,7 +1,7 @@
 /** @format */
 
-import Image from 'next/image';
-import { Search } from './search';
+import Image from "next/image";
+import { Search } from "./search";
 
 export function SearchArea() {
   return (

@@ -1,10 +1,10 @@
 /** @format */
 
-import { gql } from 'graphql-request';
-import { Payment } from '../types';
-import { graphQLClient } from '../graphQlClient';
-import { formatPaymentData } from '../utils';
-import { CORE_PAYMENT_FIELDS } from './utils';
+import { gql } from "graphql-request";
+import { graphQLClient } from "../graphQlClient";
+import type { Payment } from "../types";
+import { formatPaymentData } from "../utils";
+import { CORE_PAYMENT_FIELDS } from "./utils";
 
 export const ADDRESS_PAYMENTS_QUERY = gql`
   ${CORE_PAYMENT_FIELDS}
@@ -177,7 +177,7 @@ export const fetchAddressPayments = async (variables: {
 
     return formatPaymentData(data);
   } catch (error: any) {
-    console.error('Error fetching address payments:', error);
+    console.error("Error fetching address payments:", error);
     throw error;
   }
 };

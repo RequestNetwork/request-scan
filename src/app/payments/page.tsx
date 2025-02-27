@@ -1,10 +1,10 @@
 /** @format */
-'use client';
+"use client";
 
-import { PaymentTable } from '@/components/payment-table';
-import { useLatestPayments } from '@/lib/hooks/use-latest-payments';
-import { PaginationState } from '@tanstack/react-table';
-import { useState } from 'react';
+import { PaymentTable } from "@/components/payment-table";
+import { useLatestPayments } from "@/lib/hooks/use-latest-payments";
+import type { PaginationState } from "@tanstack/react-table";
+import { useState } from "react";
 
 export default function PaymentsPage() {
   const [pagination, setPagination] = useState<PaginationState>({

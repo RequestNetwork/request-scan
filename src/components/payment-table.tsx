@@ -1,18 +1,18 @@
 /** @format */
 
-'use client';
+"use client";
 
 import {
-  ColumnDef,
+  type ColumnDef,
+  type PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  PaginationState,
   useReactTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -20,95 +20,95 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Payment } from '@/lib/types';
-import TimeAgo from 'timeago-react';
+} from "@/components/ui/table";
+import { CHAIN_SCAN_URLS } from "@/lib/consts";
+import type { Payment } from "@/lib/types";
 import {
   formatTimestamp,
   getAmountWithCurrencySymbol,
   safeTruncateEthAddress,
-} from '@/lib/utils';
-import Link from 'next/link';
-import { formatUnits } from 'viem';
-import { CHAIN_SCAN_URLS } from '@/lib/consts';
-import { Dispatch, SetStateAction } from 'react';
-import { Skeleton } from './ui/skeleton';
+} from "@/lib/utils";
+import Link from "next/link";
+import type { Dispatch, SetStateAction } from "react";
+import TimeAgo from "timeago-react";
+import { formatUnits } from "viem";
+import { Skeleton } from "./ui/skeleton";
 
 export const columns: ColumnDef<Payment>[] = [
   {
-    accessorKey: 'reference',
-    header: 'Payment Reference',
-    cell: ({ row }) => `${String(row.getValue('reference')).slice(0, 16)}...`,
+    accessorKey: "reference",
+    header: "Payment Reference",
+    cell: ({ row }) => `${String(row.getValue("reference")).slice(0, 16)}...`,
   },
   {
-    accessorKey: 'txHash',
-    header: 'Transaction Hash',
+    accessorKey: "txHash",
+    header: "Transaction Hash",
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
         <Link
-          href={`${CHAIN_SCAN_URLS[row?.original?.chain]}/tx/${row.getValue('txHash')}`}
+          href={`${CHAIN_SCAN_URLS[row?.original?.chain]}/tx/${row.getValue("txHash")}`}
           target="_blank"
         >
-          {String(row.getValue('txHash')).slice(0, 14)}...
+          {String(row.getValue("txHash")).slice(0, 14)}...
         </Link>
       </div>
     ),
   },
   {
-    accessorKey: 'chain',
-    header: 'Blockchain',
-    cell: ({ row }: { row: any }) => row.getValue('chain'),
+    accessorKey: "chain",
+    header: "Blockchain",
+    cell: ({ row }: { row: any }) => row.getValue("chain"),
   },
   {
-    accessorKey: 'timestamp',
-    header: 'Timestamp',
+    accessorKey: "timestamp",
+    header: "Timestamp",
     cell: ({ row }) => (
       <div className="lowercase">
         <TimeAgo
-          datetime={Number(row.getValue('timestamp')) * 1000}
+          datetime={Number(row.getValue("timestamp")) * 1000}
           locale="en_short"
-        />{' '}
-        ({formatTimestamp(row.getValue('timestamp'))})
+        />{" "}
+        ({formatTimestamp(row.getValue("timestamp"))})
       </div>
     ),
   },
   {
-    accessorKey: 'from',
-    header: 'From',
+    accessorKey: "from",
+    header: "From",
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
-        <Link href={`/address/${row.getValue('from')}`}>
-          {safeTruncateEthAddress(row.getValue('from'))}
+        <Link href={`/address/${row.getValue("from")}`}>
+          {safeTruncateEthAddress(row.getValue("from"))}
         </Link>
       </div>
     ),
   },
   {
-    accessorKey: 'to',
-    header: 'To',
+    accessorKey: "to",
+    header: "To",
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
-        <Link href={`/address/${row.getValue('to')}`}>
-          {safeTruncateEthAddress(row.getValue('to'))}
+        <Link href={`/address/${row.getValue("to")}`}>
+          {safeTruncateEthAddress(row.getValue("to"))}
         </Link>
       </div>
     ),
   },
   {
-    accessorKey: 'amountInCrypto',
-    header: 'Amount',
+    accessorKey: "amountInCrypto",
+    header: "Amount",
     cell: ({ row }) => {
-      const data= row.original
+      const data = row.original;
 
       return getAmountWithCurrencySymbol(
         BigInt(data.amountInCrypto || data.amount),
         data.tokenAddress,
-      )
+      );
     },
   },
   {
-    accessorKey: 'networkFee',
-    header: 'Network Fee',
+    accessorKey: "networkFee",
+    header: "Network Fee",
     cell: ({ row }) =>
       formatUnits(
         BigInt(
@@ -118,22 +118,21 @@ export const columns: ColumnDef<Payment>[] = [
       ),
   },
   {
-    accessorKey: 'feeAmount',
-    header: 'Service Fee',
+    accessorKey: "feeAmount",
+    header: "Service Fee",
     cell: ({ row }) => {
-      const data = row.original
+      const data = row.original;
 
       return getAmountWithCurrencySymbol(
         BigInt(data.feeAmountInCrypto || data.feeAmount),
         data.tokenAddress,
-      )
-
+      );
     },
   },
   {
-    accessorKey: 'feeAddress',
-    header: 'Service Fee Address',
-    cell: ({ row }) => safeTruncateEthAddress(row.getValue('feeAddress')),
+    accessorKey: "feeAddress",
+    header: "Service Fee Address",
+    cell: ({ row }) => safeTruncateEthAddress(row.getValue("feeAddress")),
   },
 ];
 
@@ -167,11 +166,11 @@ export function PaymentTable({
     },
   });
 
-  if (status === 'pending') {
+  if (status === "pending") {
     return <Skeleton className="h-svh w-full rounded-xl" />;
   }
 
-  if (status === 'error') {
+  if (status === "error") {
     return <div>Error occurred while fetching data.</div>;
   }
 
@@ -209,7 +208,7 @@ export function PaymentTable({
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
+                    data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

@@ -1,9 +1,9 @@
 /** @format */
 
-import { useQuery } from '@tanstack/react-query';
-import { PaginationState } from '@tanstack/react-table';
-import { fetchAddressRequests } from '../queries/address-transactions';
-import { commonQueryOptions } from '../utils';
+import { useQuery } from "@tanstack/react-query";
+import type { PaginationState } from "@tanstack/react-table";
+import { fetchAddressRequests } from "../queries/address-transactions";
+import { commonQueryOptions } from "../utils";
 
 export function useAddressRequests(
   address: string,
@@ -11,7 +11,7 @@ export function useAddressRequests(
 ) {
   return useQuery({
     queryKey: [
-      'address-request',
+      "address-request",
       address,
       pagination.pageSize,
       pagination.pageIndex * pagination.pageSize,

@@ -1,7 +1,7 @@
 /** @format */
 
-import { DollarSign, Activity, ArrowRightLeft, Building } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Activity, ArrowRightLeft, Building, DollarSign } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 export function StatsArea() {
   return (

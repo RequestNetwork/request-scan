@@ -1,20 +1,20 @@
 /** @format */
-'use client';
-import { PaymentTable } from '@/components/payment-table';
-import { RequestTable } from '@/components/request-table';
-import { Button } from '@/components/ui/button';
+"use client";
+import { PaymentTable } from "@/components/payment-table";
+import { RequestTable } from "@/components/request-table";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAddressPayments } from '@/lib/hooks/use-address-payments';
-import { useAddressRequests } from '@/lib/hooks/use-address-requests';
-import { PaginationState } from '@tanstack/react-table';
-import { Copy } from 'lucide-react';
-import { useState } from 'react';
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAddressPayments } from "@/lib/hooks/use-address-payments";
+import { useAddressRequests } from "@/lib/hooks/use-address-requests";
+import type { PaginationState } from "@tanstack/react-table";
+import { Copy } from "lucide-react";
+import { useState } from "react";
 
 interface AddressPageProps {
   params: {

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import type { SingleRequestProxyDeployment } from "../types";
 import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { fetchProxyDeployments } from "../queries/srf-deployments";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import type { SingleRequestProxyDeployment } from "../types";
 import { commonQueryOptions } from "../utils";
 
 interface LatestSRFDeployments {
@@ -70,7 +70,7 @@ export const useLatestSRFDeployments = ({
       isFetching,
       error,
     }),
-    [data, isLoading, status, isFetching, error]
+    [data, isLoading, status, isFetching, error],
   );
 
   return value as LatestSRFDeployments;
