@@ -44,11 +44,9 @@ export const formatTimestamp = (timestamp: number) =>
   })} UTC`;
 
 export const getAmountWithCurrencySymbol = (
-  amount: bigint | null | undefined,
-  currency: string | null | undefined
+  amount: bigint,
+  currency: string
 ) => {
-  if (!amount) return "0";
-
   const currencyDetails: { symbol: string; decimals: number } | undefined =
     currency && isAddress(currency)
       ? currencyManager.fromAddress(currency)
