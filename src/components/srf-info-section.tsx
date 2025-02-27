@@ -1,9 +1,9 @@
-import { SingleRequestProxyDeployment } from "@/lib/types";
-import Link from "next/link";
 import { CHAIN_SCAN_URLS } from "@/lib/consts";
-import { formatUnits } from "viem";
+import type { SingleRequestProxyDeployment } from "@/lib/types";
 import { formatTimestamp } from "@/lib/utils";
+import Link from "next/link";
 import TimeAgo from "timeago-react";
+import { formatUnits } from "viem";
 
 interface SRFInfoSectionProps {
   deployments: SingleRequestProxyDeployment[];

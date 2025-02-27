@@ -1,8 +1,8 @@
 /** @format */
 
-import { SocialIcon } from 'react-social-icons';
+import { SocialIcon } from "react-social-icons";
 
-export function Socials({ color = 'black' }: { color?: string }) {
+export function Socials({ color = "black" }: { color?: string }) {
   return (
     <div className="flex items-start space-x-1">
       <SocialIcon

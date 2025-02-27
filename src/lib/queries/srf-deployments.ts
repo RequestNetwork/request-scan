@@ -209,7 +209,7 @@ export const fetchProxyDeploymentsByReference = async (variables: {
       };
     } = await graphQLClient.request(
       PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY,
-      variables
+      variables,
     );
 
     return formatProxyDeploymentData(data);

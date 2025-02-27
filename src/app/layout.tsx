@@ -3,12 +3,12 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
-import Header from "@/components/header";
 import { Footer } from "@/components/footer";
-import Providers from "./providers";
-import { Suspense } from "react";
+import Header from "@/components/header";
+import { cn } from "@/lib/utils";
 import { GoogleTagManager } from "@next/third-parties/google";
+import { Suspense } from "react";
+import Providers from "./providers";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          montserrat.variable
+          montserrat.variable,
         )}
       >
         <Providers>

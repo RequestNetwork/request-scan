@@ -1,12 +1,12 @@
 /** @format */
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { Payment } from '../types';
-import { fetchPayments } from '../queries/payments';
-import { useQuery } from '@tanstack/react-query';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { commonQueryOptions } from '../utils';
+import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { fetchPayments } from "../queries/payments";
+import type { Payment } from "../types";
+import { commonQueryOptions } from "../utils";
 
 interface ILatestPayments {
   payments: Payment[];
@@ -38,7 +38,7 @@ export const useLatestPayments = ({
   const [prefetchedData, setPrefetchedData] = useState<Payment[] | null>();
 
   const { status, isLoading, data, isFetching } = useQuery({
-    queryKey: ['payments', first, skip],
+    queryKey: ["payments", first, skip],
     queryFn: () => fetchPayments({ first, skip }),
     refetchInterval: pollInterval === 0 ? false : pollInterval,
     placeholderData: commonQueryOptions.placeholderData,
@@ -52,7 +52,7 @@ export const useLatestPayments = ({
     }
     const params = new URLSearchParams(searchParams);
 
-    params.set('page', page.toString());
+    params.set("page", page.toString());
     replace(`${pathname}?${params.toString()}`);
 
     (async () => {

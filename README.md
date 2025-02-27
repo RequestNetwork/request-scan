@@ -35,6 +35,10 @@ npm install
 ```
 
 3. Configure the Hasura GraphQL endpoint in your `.env` file.
+```bash
+cp .env.example .env
+```
+Make sure to replace `<your_hasura_graphql_url_here>` and `<your_jwt_token_here>` in the `.env` file with your actual Hasura GraphQL URL and JWT token.
 
 4. Start the development server:
 

@@ -47,7 +47,7 @@ export const formatProxyDeploymentData = (
     [x: string]: {
       singleRequestProxyDeployments: SingleRequestProxyDeployment[];
     };
-  } | null
+  } | null,
 ) => {
   if (!data) return [];
 
@@ -58,7 +58,7 @@ export const formatProxyDeploymentData = (
       (deployment) => ({
         ...deployment,
         chain: networkName,
-      })
+      }),
     );
     deployments.push(...networkDeployments);
   });

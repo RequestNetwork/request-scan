@@ -1,8 +1,8 @@
 /** @format */
 
-import Link from 'next/link';
+import Link from "next/link";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export function MainNav({
   className,
@@ -11,12 +11,12 @@ export function MainNav({
 }: React.HTMLAttributes<HTMLElement> & { hoverClass: string }) {
   return (
     <nav
-      className={cn('flex items-start space-x-4 lg:space-x-6', className)}
+      className={cn("flex items-start space-x-4 lg:space-x-6", className)}
       {...props}
     >
       <Link
         href="https://request.network/"
-        className={cn('text-sm font-medium transition-colors', hoverClass)}
+        className={cn("text-sm font-medium transition-colors", hoverClass)}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -24,7 +24,7 @@ export function MainNav({
       </Link>
       <Link
         href="https://docs.request.network/"
-        className={cn('text-sm font-medium transition-colors', hoverClass)}
+        className={cn("text-sm font-medium transition-colors", hoverClass)}
         target="_blank"
         rel="noopener noreferrer"
       >

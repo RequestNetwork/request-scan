@@ -2,10 +2,10 @@
 
 import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 import {
-  getSortedRowModel,
-  getFilteredRowModel,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -24,8 +24,8 @@ import { formatTimestamp } from "@/lib/utils";
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import TimeAgo from "timeago-react";
-import { Skeleton } from "./ui/skeleton";
 import { formatUnits } from "viem";
+import { Skeleton } from "./ui/skeleton";
 
 export const columns: ColumnDef<SingleRequestProxyDeployment>[] = [
   {
@@ -183,7 +183,7 @@ export function SRFDeploymentsTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -202,7 +202,7 @@ export function SRFDeploymentsTable({
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </TableCell>
                     ))}

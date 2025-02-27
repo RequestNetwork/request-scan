@@ -45,7 +45,7 @@ export const formatTimestamp = (timestamp: number) =>
 
 export const getAmountWithCurrencySymbol = (
   amount: bigint,
-  currency: string
+  currency: string,
 ) => {
   const currencyDetails: { symbol: string; decimals: number } | undefined =
     currency && isAddress(currency)
@@ -68,7 +68,7 @@ export const getAmountWithCurrencySymbol = (
 export function calculateShortPaymentReference(
   requestId: string,
   salt: string,
-  address: string
+  address: string,
 ): `0x${string}` | undefined {
   try {
     return `0x${PaymentReferenceCalculator.calculate(requestId, salt, address)}`;
@@ -79,7 +79,7 @@ export function calculateShortPaymentReference(
 }
 
 export const calculateLongPaymentReference = (
-  shortPaymentReference: `0x${string}`
+  shortPaymentReference: `0x${string}`,
 ) => {
   return keccak256(shortPaymentReference);
 };
@@ -104,7 +104,7 @@ export const formatPaymentData = (data: PaymentDataStructure | null) => {
   if (!data) return [];
 
   const chainEntries = Object.entries(data).filter(([key]) =>
-    key.startsWith("payment_")
+    key.startsWith("payment_"),
   );
 
   return chainEntries
@@ -114,7 +114,7 @@ export const formatPaymentData = (data: PaymentDataStructure | null) => {
         .toUpperCase() as keyof typeof CHAINS;
       return (
         value?.payments.map((payment) =>
-          mapPaymentToChain(payment, CHAINS[chainName])
+          mapPaymentToChain(payment, CHAINS[chainName]),
         ) || []
       );
     })
@@ -122,12 +122,12 @@ export const formatPaymentData = (data: PaymentDataStructure | null) => {
 };
 
 export const formatProxyDeploymentData = (
-  data: ProxyDeploymentDataStructure | null
+  data: ProxyDeploymentDataStructure | null,
 ) => {
   if (!data) return [];
 
   const chainEntries = Object.entries(data).filter(([key]) =>
-    key.startsWith("payment_")
+    key.startsWith("payment_"),
   );
 
   return chainEntries
@@ -152,25 +152,25 @@ export const commonQueryOptions = {
 };
 
 export const getTransactionCreateParameters = (
-  transaction: Transaction
+  transaction: Transaction,
 ): RequestLogicTypes.ICreateParameters => {
   return transaction?.dataObject?.data
     ?.parameters as RequestLogicTypes.ICreateParameters;
 };
 
 export const getContentDataFromCreateTransaction = (
-  createParameters: RequestLogicTypes.ICreateParameters
+  createParameters: RequestLogicTypes.ICreateParameters,
 ) => {
   const extensionData = createParameters.extensionsData;
   const contentData: Invoice = extensionData?.find(
-    (extension) => extension.id === "content-data"
+    (extension) => extension.id === "content-data",
   )?.parameters?.content;
 
   return contentData;
 };
 
 export const getPaymentDataFromCreateTransaction = (
-  createParameters: RequestLogicTypes.ICreateParameters
+  createParameters: RequestLogicTypes.ICreateParameters,
 ) => {
   const extensionData = createParameters?.extensionsData!;
   return extensionData[0]?.parameters;
@@ -180,7 +180,7 @@ export const getBalance = (payments: Payment[] | undefined) => {
   return payments
     ? payments
         .map((payment) =>
-          BigInt(payment?.amount || payment?.amountInCrypto || "0")
+          BigInt(payment?.amount || payment?.amountInCrypto || "0"),
         )
         .reduce((a, b) => a + b, BigInt(0))
     : BigInt(0);

@@ -1,10 +1,10 @@
 /** @format */
 
 import { gql } from "graphql-request";
-import { graphQLClient } from "../graphQlClient";
-import { Transaction } from "../types";
-import { groupBy } from "../utils";
 import { getAddress } from "viem";
+import { graphQLClient } from "../graphQlClient";
+import type { Transaction } from "../types";
+import { groupBy } from "../utils";
 
 export const ADDRESS_TRANSACTIONS_QUERY = gql`
   query AddressTransactionsQuery(
@@ -83,7 +83,7 @@ export const fetchAddressRequests = async (variables: {
     storage_sepolia: { transactions: Transaction[] };
   } = await graphQLClient.request(
     ADDRESS_TRANSACTIONS_QUERY,
-    formatedVariables
+    formatedVariables,
   );
 
   // Combine transactions from both networks
@@ -100,7 +100,7 @@ export const fetchAddressRequests = async (variables: {
             dataObject: JSON.parse(transaction.data),
           };
         }),
-        "channelId"
+        "channelId",
       )
     : [];
 };

@@ -1,18 +1,18 @@
 /** @format */
 
-'use client';
+"use client";
 
 import {
-  ColumnDef,
+  type ColumnDef,
+  type PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  PaginationState,
   useReactTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -20,60 +20,60 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Transaction } from '@/lib/types';
-import TimeAgo from 'timeago-react';
+} from "@/components/ui/table";
+import type { Transaction } from "@/lib/types";
 import {
   calculateShortPaymentReference,
   formatTimestamp,
   getAmountWithCurrencySymbol,
   safeTruncateEthAddress,
-} from '@/lib/utils';
-import Link from 'next/link';
-import { Dispatch, SetStateAction } from 'react';
-import { Skeleton } from './ui/skeleton';
+} from "@/lib/utils";
+import Link from "next/link";
+import type { Dispatch, SetStateAction } from "react";
+import TimeAgo from "timeago-react";
+import { Skeleton } from "./ui/skeleton";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
-    accessorKey: 'channelId',
-    header: 'Request Id',
+    accessorKey: "channelId",
+    header: "Request Id",
     cell: ({ row }) => (
       <div className="font-medium text-emerald-700">
-        <Link href={`/request/${row.getValue('channelId')}`}>
-          {String(row.getValue('channelId')).slice(0, 20)}...
+        <Link href={`/request/${row.getValue("channelId")}`}>
+          {String(row.getValue("channelId")).slice(0, 20)}...
         </Link>
       </div>
     ),
   },
   {
-    accessorKey: 'paymentReference',
-    header: 'Payment Reference',
+    accessorKey: "paymentReference",
+    header: "Payment Reference",
     cell: ({ row }) => {
       return calculateShortPaymentReference(
         row.original.channelId,
         row.original?.dataObject.data.parameters.extensionsData[0].parameters
-          .salt || '',
+          .salt || "",
         row.original?.dataObject.data.parameters.extensionsData[0].parameters
-          .paymentAddress || '',
+          .paymentAddress || "",
       );
     },
   },
   {
-    accessorKey: 'blockTimestamp',
-    header: 'Created',
+    accessorKey: "blockTimestamp",
+    header: "Created",
     cell: ({ row }) => (
       <div className="lowercase">
         <TimeAgo
-          datetime={Number(row.getValue('blockTimestamp')) * 1000}
+          datetime={Number(row.getValue("blockTimestamp")) * 1000}
           locale="en_short"
-        />{' '}
-        ({formatTimestamp(row.getValue('blockTimestamp'))})
+        />{" "}
+        ({formatTimestamp(row.getValue("blockTimestamp"))})
       </div>
     ),
   },
   {
-    accessorKey: 'payee',
-    header: 'Payee',
+    accessorKey: "payee",
+    header: "Payee",
     cell: ({ row }: { row: any }) => {
       const address = row.original?.dataObject?.data?.parameters?.payee?.value;
 
@@ -84,13 +84,13 @@ export const columns: ColumnDef<Transaction>[] = [
           </Link>
         </div>
       ) : (
-        'N/A'
+        "N/A"
       );
     },
   },
   {
-    accessorKey: 'payer',
-    header: 'Payer',
+    accessorKey: "payer",
+    header: "Payer",
     cell: ({ row }: { row: any }) => {
       const address = row.original?.dataObject?.data?.parameters?.payer?.value;
       return address ? (
@@ -100,13 +100,13 @@ export const columns: ColumnDef<Transaction>[] = [
           </Link>
         </div>
       ) : (
-        'N/A'
+        "N/A"
       );
     },
   },
   {
-    accessorKey: 'expectedAmount',
-    header: 'Expected Amount',
+    accessorKey: "expectedAmount",
+    header: "Expected Amount",
     cell: ({ row }: { row: any }) =>
       getAmountWithCurrencySymbol(
         row.original?.dataObject?.data?.parameters?.expectedAmount,
@@ -145,11 +145,11 @@ export function RequestTable({
     },
   });
 
-  if (status === 'pending') {
+  if (status === "pending") {
     return <Skeleton className="h-svh w-full rounded-xl" />;
   }
 
-  if (status === 'error') {
+  if (status === "error") {
     return <div>Error occurred while fetching data.</div>;
   }
 
@@ -187,7 +187,7 @@ export function RequestTable({
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
+                    data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

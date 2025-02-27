@@ -2,7 +2,7 @@
 
 import { gql } from "graphql-request";
 import { graphQLClient } from "../graphQlClient";
-import { Channel, Transaction } from "../types";
+import type { Channel, Transaction } from "../types";
 
 export const CHANNEL_QUERY = gql`
   query ChannelQuery($id: ID!) @cached {
@@ -79,7 +79,7 @@ export const fetchRequest = async (variables: {
             console.error(`Error parsing transaction data: ${error.message}`);
             return transaction;
           }
-        }
+        },
       ),
     };
   }
@@ -99,7 +99,7 @@ export const fetchRequest = async (variables: {
             console.error(`Error parsing transaction data: ${error.message}`);
             return transaction;
           }
-        }
+        },
       ),
     };
   }

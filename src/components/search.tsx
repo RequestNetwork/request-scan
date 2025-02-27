@@ -1,19 +1,19 @@
 /** @format */
-'use client';
+"use client";
 
-import { Search as SearchIcon } from 'lucide-react';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { isAddress } from 'viem';
+import { Search as SearchIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { isAddress } from "viem";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export function Search() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = () => {
-    if (searchQuery === '' || searchQuery.length < 3) return;
+    if (searchQuery === "" || searchQuery.length < 3) return;
     if (isAddress(searchQuery)) {
       router.push(`/address/${searchQuery}`);
     } else {
@@ -21,13 +21,13 @@ export function Search() {
       if (re.test(searchQuery)) {
         router.push(`/request/${searchQuery}`);
       } else {
-        router.push(`/not-found`);
+        router.push("/not-found");
       }
     }
   };
 
   const handleKeyPress = (event: { key: string }) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSearch();
     }
   };
