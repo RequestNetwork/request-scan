@@ -97,11 +97,14 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'amountInCrypto',
     header: 'Amount',
-    cell: ({ row }) =>
-      getAmountWithCurrencySymbol(
-        row.getValue('amountInCrypto'),
-        row.original?.tokenAddress,
-      ),
+    cell: ({ row }) => {
+      const data= row.original
+
+      return getAmountWithCurrencySymbol(
+        BigInt(data.amountInCrypto || data.amount),
+        data.tokenAddress,
+      )
+    },
   },
   {
     accessorKey: 'networkFee',
@@ -117,7 +120,15 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'feeAmount',
     header: 'Service Fee',
-    cell: ({ row }) => row.getValue('feeAmount'),
+    cell: ({ row }) => {
+      const data = row.original
+
+      return getAmountWithCurrencySymbol(
+        BigInt(data.feeAmountInCrypto || data.feeAmount),
+        data.tokenAddress,
+      )
+
+    },
   },
   {
     accessorKey: 'feeAddress',

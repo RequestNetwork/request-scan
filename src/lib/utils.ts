@@ -48,11 +48,13 @@ export const getAmountWithCurrencySymbol = (
   currency: string
 ) => {
   const currencyDetails: { symbol: string; decimals: number } | undefined =
-    isAddress(currency)
+    currency && isAddress(currency)
       ? currencyManager.fromAddress(currency)
-      : currencyManager.fromSymbol(currency);
+      : currency
+        ? currencyManager.fromSymbol(currency)
+        : undefined;
 
-  return `${formatUnits(amount, currencyDetails?.decimals || 18)} ${currencyDetails?.symbol || ""}`;
+  return `${formatUnits(amount, currencyDetails?.decimals || 18)} ${currencyDetails?.symbol || ""}`.trim();
 };
 
 /**
