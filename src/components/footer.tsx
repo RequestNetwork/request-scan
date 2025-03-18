@@ -15,7 +15,9 @@ export function Footer() {
       </div>
       <div className="flex flex-col gap-2">
         <VersionDisplay githubRelease="https://github.com/RequestNetwork/request-scan/releases" />
-        <p className="text-end text-sm text-white">© 2024 Request Network</p>
+        <p className="text-end text-sm text-white">
+          © {new Date().getFullYear()} Request Network
+        </p>
       </div>
     </div>
   );
