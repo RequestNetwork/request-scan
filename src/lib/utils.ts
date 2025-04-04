@@ -161,7 +161,7 @@ export const getTransactionCreateParameters = (
 export const getContentDataFromCreateTransaction = (
   createParameters: RequestLogicTypes.ICreateParameters,
 ) => {
-  const extensionData = createParameters.extensionsData;
+  const extensionData = createParameters?.extensionsData;
   const contentData: Invoice = extensionData?.find(
     (extension) => extension.id === "content-data",
   )?.parameters?.content;
@@ -172,8 +172,8 @@ export const getContentDataFromCreateTransaction = (
 export const getPaymentDataFromCreateTransaction = (
   createParameters: RequestLogicTypes.ICreateParameters,
 ) => {
-  const extensionData = createParameters?.extensionsData!;
-  return extensionData[0]?.parameters;
+  const extensionData = createParameters?.extensionsData;
+  return extensionData?.[0]?.parameters;
 };
 
 export const getBalance = (payments: Payment[] | undefined) => {

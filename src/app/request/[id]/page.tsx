@@ -52,7 +52,10 @@ const getGateway = (request: Channel | null) => {
   return "gnosis.gateway.request.network";
 };
 
-const ActorInfoSection = ({ actorInfo }: { actorInfo?: ActorInfo }) => {
+const ActorInfoSection = ({
+  actorInfo,
+  isEncrypted,
+}: { actorInfo?: ActorInfo; isEncrypted?: boolean }) => {
   if (
     !actorInfo ||
     Object.keys(actorInfo).every(
@@ -60,6 +63,19 @@ const ActorInfoSection = ({ actorInfo }: { actorInfo?: ActorInfo }) => {
     )
   ) {
     return "N/A";
+  }
+
+  if (isEncrypted) {
+    return (
+      <div className="grid gap-3 bg-muted/50 rounded-md p-2 overflow-x-scroll">
+        <ul className="grid gap-3">
+          <li className="flex items-center justify-start gap-2">
+            <span className="text-muted-foreground">Status:</span>
+            <span>Encrypted</span>
+          </li>
+        </ul>
+      </div>
+    );
   }
 
   return (
@@ -131,10 +147,10 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   const shortPaymentReference = request
     ? calculateShortPaymentReference(
         id,
-        request?.transactions[0].dataObject.data.parameters.extensionsData[0]
-          .parameters.salt || "",
-        request?.transactions[0].dataObject.data.parameters.extensionsData[0]
-          .parameters.paymentAddress || "",
+        request?.transactions[0].dataObject?.data?.parameters?.extensionsData[0]
+          ?.parameters.salt || "",
+        request?.transactions[0].dataObject?.data?.parameters?.extensionsData[0]
+          ?.parameters.paymentAddress || "",
       )
     : "";
 
@@ -171,9 +187,17 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
 
   const balance = getBalance(requestPayments);
 
-  const createParameters = getTransactionCreateParameters(firstTransaction);
-  const contentData = getContentDataFromCreateTransaction(createParameters);
-  const paymentData = getPaymentDataFromCreateTransaction(createParameters);
+  const createParametersFromFirstTransaction =
+    getTransactionCreateParameters(firstTransaction);
+  const createParametersFromLastTransaction =
+    getTransactionCreateParameters(lastTransaction);
+
+  const contentData = getContentDataFromCreateTransaction(
+    createParametersFromLastTransaction,
+  );
+  const paymentData = getPaymentDataFromCreateTransaction(
+    createParametersFromFirstTransaction,
+  );
 
   const balanceCurrency =
     paymentData?.acceptedTokens?.length > 0
@@ -184,7 +208,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   const sellerData = contentData?.sellerInfo;
 
   const status =
-    balance >= BigInt(createParameters.expectedAmount)
+    balance >= BigInt(createParametersFromFirstTransaction?.expectedAmount || 0)
       ? "Paid"
       : lastTransaction?.dataObject?.data?.name;
 
@@ -200,11 +224,11 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
     try {
       await exportPDF({
         ...contentData,
-        currency: createParameters.currency,
-        currencyInfo: createParameters.currency,
-        payer: createParameters.payer,
-        payee: createParameters.payee,
-        expectedAmount: createParameters.expectedAmount,
+        currency: createParametersFromFirstTransaction?.currency,
+        currencyInfo: createParametersFromFirstTransaction?.currency,
+        payer: createParametersFromFirstTransaction?.payer,
+        payee: createParametersFromFirstTransaction?.payee,
+        expectedAmount: createParametersFromFirstTransaction?.expectedAmount,
         paymentData,
       });
     } catch (error) {
@@ -266,8 +290,10 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="text-muted-foreground">Payee:</td>
                   <td className="pl-16">
                     <div className="font-medium text-emerald-700 break-all">
-                      <Link href={`/address/${createParameters.payee?.value}`}>
-                        {createParameters.payee?.value}
+                      <Link
+                        href={`/address/${createParametersFromFirstTransaction?.payee?.value}`}
+                      >
+                        {createParametersFromFirstTransaction?.payee?.value}
                       </Link>
                     </div>
                   </td>
@@ -275,15 +301,20 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 <tr>
                   <td className="text-muted-foreground">Payee Details:</td>
                   <td className="pl-16">
-                    <ActorInfoSection actorInfo={sellerData} />
+                    <ActorInfoSection
+                      actorInfo={sellerData}
+                      isEncrypted={!!firstTransaction?.encryptedData}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="text-muted-foreground">Payer:</td>
                   <td className="pl-16">
                     <div className="font-medium text-emerald-700 break-all">
-                      <Link href={`/address/${createParameters.payer?.value}`}>
-                        {createParameters.payer?.value}
+                      <Link
+                        href={`/address/${createParametersFromFirstTransaction?.payer?.value}`}
+                      >
+                        {createParametersFromFirstTransaction?.payer?.value}
                       </Link>
                     </div>
                   </td>
@@ -291,15 +322,22 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                 <tr>
                   <td className="text-muted-foreground">Payer Details:</td>
                   <td className="pl-16">
-                    <ActorInfoSection actorInfo={buyerData} />
+                    <ActorInfoSection
+                      actorInfo={buyerData}
+                      isEncrypted={!!firstTransaction?.encryptedData}
+                    />
                   </td>
                 </tr>
                 <tr>
                   <td className="text-muted-foreground">Expected Amount:</td>
                   <td className="pl-16">
                     {getAmountWithCurrencySymbol(
-                      BigInt(createParameters.expectedAmount),
-                      createParameters.currency.value,
+                      BigInt(
+                        createParametersFromFirstTransaction?.expectedAmount ||
+                          0,
+                      ),
+                      createParametersFromFirstTransaction?.currency?.value ||
+                        "",
                     )}
                   </td>
                 </tr>
@@ -345,21 +383,35 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   </td>
                 </tr>
                 <tr>
+                  <td className="text-muted-foreground">Encryption Status:</td>
+                  <td className="pl-16">
+                    {firstTransaction?.encryptedData
+                      ? "Encrypted"
+                      : "Not Encrypted"}
+                  </td>
+                </tr>
+                <tr>
                   <td className="text-muted-foreground">Raw Content Data:</td>
                   <td className="pl-16">
-                    <div className="bg-muted/50 rounded-md p-2">
-                      <JsonEditor
-                        data={contentData}
-                        restrictEdit={true}
-                        restrictDelete={true}
-                        restrictAdd={true}
-                        restrictDrag={true}
-                        restrictTypeSelection={true}
-                        theme="githubLight"
-                        collapse={true}
-                        rootFontSize={14}
-                      />
-                    </div>
+                    {firstTransaction?.encryptedData ? (
+                      <div className="bg-muted/50 rounded-md p-2">
+                        <div className="text-muted-foreground">Encrypted</div>
+                      </div>
+                    ) : (
+                      <div className="bg-muted/50 rounded-md p-2">
+                        <JsonEditor
+                          data={contentData}
+                          restrictEdit={true}
+                          restrictDelete={true}
+                          restrictAdd={true}
+                          restrictDrag={true}
+                          restrictTypeSelection={true}
+                          theme="githubLight"
+                          collapse={true}
+                          rootFontSize={14}
+                        />
+                      </div>
+                    )}
                   </td>
                 </tr>
               </tbody>

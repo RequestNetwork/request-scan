@@ -29,6 +29,10 @@ export interface Transaction {
   data: string;
   dataObject: any;
   dataHash: string;
+  encryptedData?: string;
+  encryptedKeys?: string;
+  encryptionMethod?: string;
+  publicKeys?: string;
   hash: string;
   id: string;
   size: string;
