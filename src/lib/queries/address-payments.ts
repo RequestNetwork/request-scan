@@ -9,17 +9,6 @@ import { CORE_PAYMENT_FIELDS } from "./utils";
 export const ADDRESS_PAYMENTS_QUERY = gql`
   ${CORE_PAYMENT_FIELDS}
   query AddressPaymentsQuery($first: Int, $skip: Int!, $address: Bytes) {
-    payment_mainnet {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
     payment_arbitrum_one {
       payments(
         first: $first
@@ -65,6 +54,17 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
       }
     }
     payment_celo {
+      payments(
+        first: $first
+        skip: $skip
+        orderBy: timestamp
+        orderDirection: desc
+        where: { or: [{ to: $address }, { from: $address }] }
+      ) {
+        ...PaymentFields
+      }
+    }
+    payment_ethereum {
       payments(
         first: $first
         skip: $skip
@@ -141,7 +141,7 @@ export const ADDRESS_PAYMENTS_QUERY = gql`
         ...PaymentFields
       }
     }
-    payment_xdai {
+    payment_gnosis {
       payments(
         first: $first
         skip: $skip

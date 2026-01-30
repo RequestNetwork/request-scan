@@ -10,16 +10,6 @@ export const PAYMENTS_QUERY = gql`
   ${CORE_PAYMENT_FIELDS}
   query PaymentsQuery($first: Int, $skip: Int!) {
     #
-    payment_mainnet {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
     payment_arbitrum_one {
       payments(
         first: $first
@@ -61,6 +51,16 @@ export const PAYMENTS_QUERY = gql`
       }
     }
     payment_celo {
+      payments(
+        first: $first
+        skip: $skip
+        orderBy: timestamp
+        orderDirection: desc
+      ) {
+        ...PaymentFields
+      }
+    }
+    payment_ethereum {
       payments(
         first: $first
         skip: $skip
@@ -130,7 +130,7 @@ export const PAYMENTS_QUERY = gql`
         ...PaymentFields
       }
     }
-    payment_xdai {
+    payment_gnosis {
       payments(
         first: $first
         skip: $skip
