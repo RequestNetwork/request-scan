@@ -7,16 +7,6 @@ import { CORE_PROXY_DEPLOYMENT_FIELDS } from "./utils";
 export const PROXY_DEPLOYMENTS_QUERY = gql`
   ${CORE_PROXY_DEPLOYMENT_FIELDS}
   query ProxyDeploymentsQuery($first: Int!, $skip: Int!) {
-    payment_mainnet {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
     payment_arbitrum_one {
       singleRequestProxyDeployments(
         first: $first
@@ -67,6 +57,16 @@ export const PROXY_DEPLOYMENTS_QUERY = gql`
         ...ProxyDeploymentFields
       }
     }
+    payment_ethereum {
+      singleRequestProxyDeployments(
+        first: $first
+        skip: $skip
+        orderBy: timestamp
+        orderDirection: desc
+      ) {
+        ...ProxyDeploymentFields
+      }
+    }
     payment_matic {
       singleRequestProxyDeployments(
         first: $first
@@ -97,7 +97,7 @@ export const PROXY_DEPLOYMENTS_QUERY = gql`
         ...ProxyDeploymentFields
       }
     }
-    payment_xdai {
+    payment_gnosis {
       singleRequestProxyDeployments(
         first: $first
         skip: $skip
@@ -141,11 +141,6 @@ export const fetchProxyDeployments = async (variables: {
 export const PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY = gql`
   ${CORE_PROXY_DEPLOYMENT_FIELDS}
   query ProxyDeploymentsByReferenceQuery($reference: Bytes!) {
-    payment_mainnet {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
     payment_arbitrum_one {
       singleRequestProxyDeployments(where: { paymentReference: $reference }) {
         ...ProxyDeploymentFields
@@ -171,6 +166,11 @@ export const PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY = gql`
         ...ProxyDeploymentFields
       }
     }
+    payment_ethereum {
+      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
+        ...ProxyDeploymentFields
+      }
+    }
     payment_matic {
       singleRequestProxyDeployments(where: { paymentReference: $reference }) {
         ...ProxyDeploymentFields
@@ -186,7 +186,7 @@ export const PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY = gql`
         ...ProxyDeploymentFields
       }
     }
-    payment_xdai {
+    payment_gnosis {
       singleRequestProxyDeployments(where: { paymentReference: $reference }) {
         ...ProxyDeploymentFields
       }

@@ -11,15 +11,6 @@ export const REQUEST_PAYMENTS_QUERY = gql`
 
   query RequestPaymentsQuery($reference: Bytes!) @cached {
     #
-    payment_mainnet {
-      payments(
-        orderBy: timestamp
-        orderDirection: desc
-        where: { reference: $reference }
-      ) {
-        ...PaymentFields
-      }
-    }
     payment_arbitrum_one {
       payments(
         where: { reference: $reference }
@@ -61,6 +52,15 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         where: { reference: $reference }
         orderBy: timestamp
         orderDirection: desc
+      ) {
+        ...PaymentFields
+      }
+    }
+    payment_ethereum {
+      payments(
+        orderBy: timestamp
+        orderDirection: desc
+        where: { reference: $reference }
       ) {
         ...PaymentFields
       }
@@ -119,7 +119,7 @@ export const REQUEST_PAYMENTS_QUERY = gql`
         ...PaymentFields
       }
     }
-    payment_xdai {
+    payment_gnosis {
       payments(
         where: { reference: $reference }
         orderBy: timestamp
