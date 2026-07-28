@@ -27,12 +27,16 @@ import TimeAgo from "timeago-react";
 import { Skeleton } from "./ui/skeleton";
 
 export function RecentPaymentTable() {
-  const { payments, isLoading } = useLatestPayments({
+  const { payments, isLoading, status } = useLatestPayments({
     pollInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
   });
 
   if (isLoading) {
     return <Skeleton className="h-full w-full rounded-xl" />;
+  }
+
+  if (status === "error") {
+    return <div>Error occurred while fetching data.</div>;
   }
 
   if (!payments) {

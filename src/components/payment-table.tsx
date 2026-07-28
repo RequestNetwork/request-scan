@@ -109,13 +109,19 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "networkFee",
     header: "Network Fee",
-    cell: ({ row }) =>
-      formatUnits(
-        BigInt(
-          Number(row?.original?.gasUsed) * Number(row?.original?.gasPrice),
-        ),
-        18,
-      ),
+    cell: ({ row }) => {
+      const { gasUsed, gasPrice } = row.original;
+
+      if (!gasUsed || !gasPrice) {
+        return "N/A";
+      }
+
+      try {
+        return formatUnits(BigInt(gasUsed) * BigInt(gasPrice), 18);
+      } catch {
+        return "N/A";
+      }
+    },
   },
   {
     accessorKey: "feeAmount",
