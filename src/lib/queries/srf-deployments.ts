@@ -1,113 +1,17 @@
 import { gql } from "graphql-request";
-import { graphQLClient } from "../graphQlClient";
+import { SRF_CHAIN_REMOTES } from "../consts";
 import type { SingleRequestProxyDeployment } from "../types";
 import { formatProxyDeploymentData } from "../utils";
-import { CORE_PROXY_DEPLOYMENT_FIELDS } from "./utils";
+import { CORE_PROXY_DEPLOYMENT_FIELDS, requestPerChain } from "./utils";
 
-export const PROXY_DEPLOYMENTS_QUERY = gql`
+type ProxyDeploymentsResult = {
+  singleRequestProxyDeployments: SingleRequestProxyDeployment[];
+};
+
+export const buildProxyDeploymentsQuery = (chain: string) => gql`
   ${CORE_PROXY_DEPLOYMENT_FIELDS}
   query ProxyDeploymentsQuery($first: Int!, $skip: Int!) {
-    payment_mainnet {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_arbitrum_one {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_avalanche {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_base {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_bsc {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_celo {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_matic {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_optimism {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_sepolia {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_xdai {
-      singleRequestProxyDeployments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_zksyncera {
+    ${chain} {
       singleRequestProxyDeployments(
         first: $first
         skip: $skip
@@ -124,74 +28,20 @@ export const fetchProxyDeployments = async (variables: {
   first: number;
   skip: number;
 }): Promise<SingleRequestProxyDeployment[]> => {
-  try {
-    const data: {
-      [x: string]: {
-        singleRequestProxyDeployments: SingleRequestProxyDeployment[];
-      };
-    } = await graphQLClient.request(PROXY_DEPLOYMENTS_QUERY, variables);
+  const data = await requestPerChain<ProxyDeploymentsResult>(
+    "fetchProxyDeployments",
+    SRF_CHAIN_REMOTES,
+    buildProxyDeploymentsQuery,
+    variables,
+  );
 
-    return formatProxyDeploymentData(data);
-  } catch (error) {
-    console.error("Error fetching proxy deployments:", error);
-    return [];
-  }
+  return formatProxyDeploymentData(data);
 };
 
-export const PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY = gql`
+export const buildProxyDeploymentsByReferenceQuery = (chain: string) => gql`
   ${CORE_PROXY_DEPLOYMENT_FIELDS}
   query ProxyDeploymentsByReferenceQuery($reference: Bytes!) {
-    payment_mainnet {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_arbitrum_one {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_avalanche {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_base {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_bsc {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_celo {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_matic {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_optimism {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_sepolia {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_xdai {
-      singleRequestProxyDeployments(where: { paymentReference: $reference }) {
-        ...ProxyDeploymentFields
-      }
-    }
-    payment_zksyncera {
+    ${chain} {
       singleRequestProxyDeployments(where: { paymentReference: $reference }) {
         ...ProxyDeploymentFields
       }
@@ -202,19 +52,12 @@ export const PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY = gql`
 export const fetchProxyDeploymentsByReference = async (variables: {
   reference: string;
 }): Promise<SingleRequestProxyDeployment[]> => {
-  try {
-    const data: {
-      [x: string]: {
-        singleRequestProxyDeployments: SingleRequestProxyDeployment[];
-      };
-    } = await graphQLClient.request(
-      PROXY_DEPLOYMENTS_BY_REFERENCE_QUERY,
-      variables,
-    );
+  const data = await requestPerChain<ProxyDeploymentsResult>(
+    "fetchProxyDeploymentsByReference",
+    SRF_CHAIN_REMOTES,
+    buildProxyDeploymentsByReferenceQuery,
+    variables,
+  );
 
-    return formatProxyDeploymentData(data);
-  } catch (err) {
-    console.error("Error fetching proxy deployments by reference", err);
-    return [];
-  }
+  return formatProxyDeploymentData(data);
 };

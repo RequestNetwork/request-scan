@@ -1,134 +1,16 @@
 /** @format */
 
 import { gql } from "graphql-request";
-import { graphQLClient } from "../graphQlClient";
+import { PAYMENT_CHAIN_REMOTES } from "../consts";
 import type { Payment } from "../types";
 import { formatPaymentData } from "../utils";
-import { CORE_PAYMENT_FIELDS } from "./utils";
+import { CORE_PAYMENT_FIELDS, requestPerChain } from "./utils";
 
-export const REQUEST_PAYMENTS_QUERY = gql`
+export const buildRequestPaymentsQuery = (chain: string) => gql`
   ${CORE_PAYMENT_FIELDS}
 
   query RequestPaymentsQuery($reference: Bytes!) @cached {
-    #
-    payment_mainnet {
-      payments(
-        orderBy: timestamp
-        orderDirection: desc
-        where: { reference: $reference }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_arbitrum_one {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_avalanche {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_base {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_bsc {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_celo {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_fantom {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_fuse {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_matic {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_moonbeam {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_optimism {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_sepolia {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_xdai {
-      payments(
-        where: { reference: $reference }
-        orderBy: timestamp
-        orderDirection: desc
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_zksyncera {
+    ${chain} {
       payments(
         where: { reference: $reference }
         orderBy: timestamp
@@ -144,10 +26,16 @@ export const fetchRequestPayments = async (variables: {
   reference: string;
 }): Promise<Payment[]> => {
   try {
-    const data: { [x: string]: { payments: Payment[] } } | null =
-      variables.reference
-        ? await graphQLClient.request(REQUEST_PAYMENTS_QUERY, variables)
-        : null;
+    if (!variables.reference) {
+      return formatPaymentData(null);
+    }
+
+    const data = await requestPerChain<{ payments: Payment[] }>(
+      "fetchRequestPayments",
+      PAYMENT_CHAIN_REMOTES,
+      buildRequestPaymentsQuery,
+      variables,
+    );
 
     return formatPaymentData(data);
   } catch (error) {
