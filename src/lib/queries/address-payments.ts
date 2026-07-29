@@ -1,158 +1,15 @@
 /** @format */
 
 import { gql } from "graphql-request";
-import { graphQLClient } from "../graphQlClient";
+import { PAYMENT_CHAIN_REMOTES } from "../consts";
 import type { Payment } from "../types";
 import { formatPaymentData } from "../utils";
-import { CORE_PAYMENT_FIELDS } from "./utils";
+import { CORE_PAYMENT_FIELDS, requestPerChain } from "./utils";
 
-export const ADDRESS_PAYMENTS_QUERY = gql`
+export const buildAddressPaymentsQuery = (chain: string) => gql`
   ${CORE_PAYMENT_FIELDS}
   query AddressPaymentsQuery($first: Int, $skip: Int!, $address: Bytes) {
-    payment_mainnet {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_arbitrum_one {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_avalanche {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_base {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_bsc {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_celo {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_fantom {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_fuse {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_matic {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_moonbeam {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_optimism {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_sepolia {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_xdai {
-      payments(
-        first: $first
-        skip: $skip
-        orderBy: timestamp
-        orderDirection: desc
-        where: { or: [{ to: $address }, { from: $address }] }
-      ) {
-        ...PaymentFields
-      }
-    }
-    payment_zksyncera {
+    ${chain} {
       payments(
         first: $first
         skip: $skip
@@ -172,8 +29,12 @@ export const fetchAddressPayments = async (variables: {
   address: string;
 }): Promise<Payment[]> => {
   try {
-    const data: { [x: string]: { payments: Payment[] } } =
-      await graphQLClient.request(ADDRESS_PAYMENTS_QUERY, variables);
+    const data = await requestPerChain<{ payments: Payment[] }>(
+      "fetchAddressPayments",
+      PAYMENT_CHAIN_REMOTES,
+      buildAddressPaymentsQuery,
+      variables,
+    );
 
     return formatPaymentData(data);
   } catch (error: any) {

@@ -10,7 +10,8 @@
     "format": "biome format --write",
     "check": "biome check --write",
     "lint-staged": "lint-staged",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest run"
   },
   "dependencies": {
     "@next/third-parties": "^15.0.3",
@@ -54,6 +55,7 @@
     "lint-staged": "^15.2.10",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   }
 }

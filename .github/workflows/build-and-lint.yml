@@ -92,3 +92,47 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_HASURA_GRAPHQL_URL: "https://unreachable.invalid/v1/graphql"
+          NEXT_PUBLIC_POLL_INTERVAL: "30000"
+          NEXT_PUBLIC_HASURA_GRAPHQL_JWT_TOKEN: "dummy-jwt-token"
+
+      - name: Test
+        run: npm test
+
+      - name: Smoke test - server renders dynamic routes
+        env:
+          NEXT_PUBLIC_HASURA_GRAPHQL_URL: "https://unreachable.invalid/v1/graphql"
+          NEXT_PUBLIC_POLL_INTERVAL: "30000"
+          NEXT_PUBLIC_HASURA_GRAPHQL_JWT_TOKEN: "dummy-jwt-token"
+        run: |
+          npm start &
+          SERVER_PID=$!
+
+          echo "Waiting for server to become ready..."
+          READY=false
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null "http://localhost:3000/"; then
+              READY=true
+              break
+            fi
+            sleep 1
+          done
+
+          if [ "$READY" != "true" ]; then
+            echo "Server never became ready within timeout"
+            kill "$SERVER_PID" 2>/dev/null || true
+            exit 1
+          fi
+
+          ROOT_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000/")
+          REQUEST_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000/request/0x1234567890abcdef1234567890abcdef12345678-0")
+
+          echo "Observed status codes: / -> $ROOT_STATUS, /request/<id> -> $REQUEST_STATUS"
+
+          kill "$SERVER_PID" 2>/dev/null || true
+
+          if [ "$ROOT_STATUS" -ge 500 ] || [ "$REQUEST_STATUS" -ge 500 ]; then
+            echo "Smoke test failed: server returned a 5xx status code"
+            exit 1
+          fi

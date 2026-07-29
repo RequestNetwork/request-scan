@@ -69,6 +69,35 @@ export enum PAYMENT_CHAINS {
   ZKSYNCERA = "payment_zksyncera",
 }
 
+/**
+ * Every payment subgraph remote, used to fan out the payment queries one
+ * request per chain.
+ */
+export const PAYMENT_CHAIN_REMOTES: readonly PAYMENT_CHAINS[] =
+  Object.values(PAYMENT_CHAINS);
+
+/**
+ * Remotes that expose the `singleRequestProxyDeployments` entity.
+ *
+ * This is intentionally NOT `PAYMENT_CHAIN_REMOTES`: the Single Request
+ * Forwarder subgraphs are only deployed on a subset of chains, and
+ * `payment_zksyncera` in particular has no `singleRequestProxyDeployments`
+ * field at all, so querying it always fails with
+ * `field 'singleRequestProxyDeployments' not found in type: 'payment_zksynceraQuery'`.
+ */
+export const SRF_CHAIN_REMOTES: readonly PAYMENT_CHAINS[] = [
+  PAYMENT_CHAINS.MAINNET,
+  PAYMENT_CHAINS.ARBITRUM_ONE,
+  PAYMENT_CHAINS.AVALANCHE,
+  PAYMENT_CHAINS.BASE,
+  PAYMENT_CHAINS.BSC,
+  PAYMENT_CHAINS.CELO,
+  PAYMENT_CHAINS.MATIC,
+  PAYMENT_CHAINS.OPTIMISM,
+  PAYMENT_CHAINS.SEPOLIA,
+  PAYMENT_CHAINS.XDAI,
+];
+
 export const PUBLIC_CLIENTS = {
   [CHAINS.MAINNET]: createPublicClient({
     chain: mainnet,
