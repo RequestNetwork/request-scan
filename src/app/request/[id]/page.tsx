@@ -35,7 +35,7 @@ import { useQuery } from "@tanstack/react-query";
 import { JsonEditor } from "json-edit-react";
 import { Copy, File, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { useState } from "react";
 import TimeAgo from "timeago-react";
 
@@ -138,7 +138,7 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   const { exportPDF } = useExportPDF();
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const { data: request, isLoading: isLoadingRequest } = useQuery({
+  const { data: request, status: requestStatus } = useQuery({
     queryKey: ["request", id],
     queryFn: () => fetchRequest({ id }),
     ...commonQueryOptions,
@@ -147,10 +147,10 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
   const shortPaymentReference = request
     ? calculateShortPaymentReference(
         id,
-        request?.transactions[0].dataObject?.data?.parameters?.extensionsData[0]
-          ?.parameters.salt || "",
-        request?.transactions[0].dataObject?.data?.parameters?.extensionsData[0]
-          ?.parameters.paymentAddress || "",
+        request?.transactions?.[0]?.dataObject?.data?.parameters
+          ?.extensionsData?.[0]?.parameters.salt || "",
+        request?.transactions?.[0]?.dataObject?.data?.parameters
+          ?.extensionsData?.[0]?.parameters.paymentAddress || "",
       )
     : "";
 
@@ -173,17 +173,21 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
     ...commonQueryOptions,
   });
 
-  if (isLoadingRequest || isLoadingRequestPayments || isLoadingSRF) {
+  if (requestStatus === "pending" || isLoadingRequestPayments || isLoadingSRF) {
     return <Skeleton className="h-[500px] w-full rounded-xl" />;
   }
 
-  if (!request) {
-    redirect("/not-found");
+  if (requestStatus === "error") {
+    return <div>Error occurred while fetching data.</div>;
   }
 
-  const firstTransaction = request?.transactions[0];
+  if (!request) {
+    notFound();
+  }
+
+  const firstTransaction = request?.transactions?.[0];
   const lastTransaction =
-    request?.transactions[request.transactions.length - 1];
+    request?.transactions?.[request.transactions.length - 1];
 
   const balance = getBalance(requestPayments);
 
@@ -354,10 +358,10 @@ export default function RequestPage({ params: { id } }: RequestPageProps) {
                   <td className="text-muted-foreground">Created:</td>
                   <td className="pl-16">
                     <TimeAgo
-                      datetime={firstTransaction.blockTimestamp * 1000}
+                      datetime={(firstTransaction?.blockTimestamp || 0) * 1000}
                       locale="en_short"
                     />{" "}
-                    ({formatTimestamp(firstTransaction.blockTimestamp)})
+                    ({formatTimestamp(firstTransaction?.blockTimestamp || 0)})
                   </td>
                 </tr>
                 <tr>

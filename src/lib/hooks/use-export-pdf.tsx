@@ -2,8 +2,6 @@
 "use client";
 
 import type { Invoice, InvoiceItem } from "@requestnetwork/data-format";
-// @ts-expect-error: No html2pdf does not have the @types to install
-import html2pdf from "html2pdf.js";
 import { formatUnits, isAddress } from "viem";
 import { currencyManager } from "../currency-manager";
 import type { PaymentData } from "../types";
@@ -79,6 +77,9 @@ export default function useExportPDF() {
 
     const generatePDF = async () => {
       try {
+        // @ts-expect-error: html2pdf.js does not have the @types to install
+        const html2pdf = (await import("html2pdf.js")).default;
+
         const currencyDetails = getCurrencyDetails(invoice.currencyInfo?.value);
         const paymentCurrencyDetails = getCurrencyDetails(
           invoice.paymentData?.acceptedTokens?.length > 0

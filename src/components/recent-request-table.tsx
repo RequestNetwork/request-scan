@@ -25,12 +25,16 @@ import TimeAgo from "timeago-react";
 import { Skeleton } from "./ui/skeleton";
 
 export function RecentRequestTable() {
-  const { requests, isLoading } = useLatestRequests({
+  const { requests, isLoading, status } = useLatestRequests({
     pollInterval: Number(process.env.NEXT_PUBLIC_POLL_INTERVAL) || 30000,
   });
 
   if (isLoading) {
     return <Skeleton className="h-svh w-full rounded-xl" />;
+  }
+
+  if (status === "error") {
+    return <div>Error occurred while fetching data.</div>;
   }
 
   if (!requests) {

@@ -51,10 +51,10 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       return calculateShortPaymentReference(
         row.original.channelId,
-        row.original?.dataObject.data.parameters.extensionsData[0].parameters
-          .salt || "",
-        row.original?.dataObject.data.parameters.extensionsData[0].parameters
-          .paymentAddress || "",
+        row.original?.dataObject?.data?.parameters?.extensionsData?.[0]
+          ?.parameters?.salt || "",
+        row.original?.dataObject?.data?.parameters?.extensionsData?.[0]
+          ?.parameters?.paymentAddress || "",
       );
     },
   },
