@@ -97,6 +97,9 @@ jobs:
           NEXT_PUBLIC_POLL_INTERVAL: "30000"
           NEXT_PUBLIC_HASURA_GRAPHQL_JWT_TOKEN: "dummy-jwt-token"
 
+      - name: Test
+        run: npm test
+
       - name: Smoke test - server renders dynamic routes
         env:
           NEXT_PUBLIC_HASURA_GRAPHQL_URL: "https://unreachable.invalid/v1/graphql"
