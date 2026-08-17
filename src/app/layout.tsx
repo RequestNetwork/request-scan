@@ -16,6 +16,14 @@ export const metadata: Metadata = {
   title: "Request Scan (The Request Network Explorer)",
   description:
     "Request Scan allows you to explore and search the Request Network for requests, payments, addresses, other activities taking place on Request Network Protocol.",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 };
 
 export default function RootLayout({
