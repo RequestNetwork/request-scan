@@ -14,15 +14,16 @@ import { useAddressPayments } from "@/lib/hooks/use-address-payments";
 import { useAddressRequests } from "@/lib/hooks/use-address-requests";
 import type { PaginationState } from "@tanstack/react-table";
 import { Copy } from "lucide-react";
-import { useState } from "react";
+import { use, useState } from "react";
 
 interface AddressPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function AddressPage({ params: { id } }: AddressPageProps) {
+export default function AddressPage({ params }: AddressPageProps) {
+  const { id } = use(params);
   const [requestPagination, setRequestPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,

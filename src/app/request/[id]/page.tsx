@@ -7,9 +7,9 @@ import { cache } from "react";
 import { RequestDetails } from "./request-details";
 
 interface RequestPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // Memoized per render pass so generateMetadata and the page share one network
@@ -29,8 +29,9 @@ const getRequest = cache((id: string) => fetchRequest({ id }));
 // middleware), noindex is what actually prevents these from polluting the
 // search index, which is the harm a soft 404 does.
 export const generateMetadata = async ({
-  params: { id },
+  params,
 }: RequestPageProps): Promise<Metadata> => {
+  const { id } = await params;
   const request = await getRequest(id);
 
   if (!request) {
@@ -46,9 +47,8 @@ export const generateMetadata = async ({
   };
 };
 
-export default async function RequestPage({
-  params: { id },
-}: RequestPageProps) {
+export default async function RequestPage({ params }: RequestPageProps) {
+  const { id } = await params;
   // Fetched on the server so crawlers and link previews receive the request in
   // the initial HTML. A thrown fetch is intentionally left to propagate to the
   // error boundary: a backend outage must not be reported as "this request does
