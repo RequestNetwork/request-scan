@@ -52,7 +52,7 @@ npm run dev
 
 Keep the Nixpacks build method and existing environment settings.
 `nixpacks.toml` pins the Nix package snapshot supplying Node.js 22.23.5 and
-rejects a different Node version before dependency installation. This pin is
+requires Node >=22.23.5 <23 before dependency installation. This pin is
 needed because selecting Node 22 alone can select an older patch release.
 
 The container listens on port 3000. After staging deployment, verify

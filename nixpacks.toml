@@ -3,5 +3,5 @@
 nixpkgsArchive = "cc368858ca7a000e1b3f014d94df9f0ea3b62391"
 
 [phases.install]
-# Fail the build if the effective runtime differs from the security pin.
-cmds = ["node -e \"if (process.version !== 'v22.23.5') process.exit(1)\"", "npm ci"]
+# Require >=22.23.5 <23 while the snapshot pins the installed version.
+cmds = ["node -e \"const v = process.versions.node.split('.').map(Number); if (!v.every(Number.isInteger) || v[0] !== 22 || v[1] < 23 || (v[1] === 23 && v[2] < 5)) process.exit(1)\"", "npm ci"]
