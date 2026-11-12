@@ -48,6 +48,21 @@ npm run dev
 
 5. Open your browser and navigate to http://localhost:3000.
 
+## EasyPanel deployment
+
+Keep the Nixpacks build method and existing environment settings.
+`nixpacks.toml` pins the Nix package snapshot supplying Node.js 22.23.5 and
+requires Node >=22.23.5 <23 before dependency installation. This pin is
+needed because selecting Node 22 alone can select an older patch release.
+
+The container listens on port 3000. After staging deployment, verify
+`node --version` is `v22.23.5`, check known requests and payments (including
+USDC amounts), and check address pages and the `X-Robots-Tag` header.
+
+Publishing a GitHub Release triggers the production deployment webhook through
+`.github/workflows/deploy-to-production.yml`. Publish only after staging UAT
+passes and production deployment is approved.
+
 ## Contributing
 
 Contributions are welcome! Please read the [CONTRIBUTING.md](/CONTRIBUTING.md) file for guidelines on how to contribute to the project.
